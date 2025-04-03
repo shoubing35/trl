@@ -94,6 +94,9 @@ if __name__ == "__main__":
     tokenizer.add_special_tokens({"pad_token": "[PAD]"})
     if tokenizer.chat_template is None:
         tokenizer.chat_template = SIMPLE_CHAT_TEMPLATE
+
+    print("Vocab size:", tokenizer.vocab_size) # charles debug
+
     value_model = AutoModelForSequenceClassification.from_pretrained(
         training_args.reward_model_path, trust_remote_code=model_args.trust_remote_code, num_labels=1
     )
@@ -103,6 +106,10 @@ if __name__ == "__main__":
     policy = AutoModelForCausalLM.from_pretrained(
         training_args.sft_model_path, trust_remote_code=model_args.trust_remote_code
     )
+
+    print("Value model vocab size:", value_model.config.vocab_size)  # charles debug
+    print("Reward model vocab size:", reward_model.config.vocab_size)  # charles debug
+    print("Policy model vocab size:", policy.config.vocab_size) # charles debug
 
     peft_config = get_peft_config(model_args)
     if peft_config is None:
