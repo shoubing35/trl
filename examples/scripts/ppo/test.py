@@ -130,7 +130,7 @@ if __name__ == "__main__":
     ]
     print(f"text_inference = \n{text_inference}")
     pipe = pipeline("text-generation", model=policy, tokenizer=tokenizer)
-    response = pipe(messages, max_new_tokens=256, do_sample=False)
+    response = pipe(messages, max_new_tokens=512, do_sample=False)
     assistant_reply = next(
         item['content'] for item in response[0]['generated_text'] if item['role'] == 'assistant'
     )
