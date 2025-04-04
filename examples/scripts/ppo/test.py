@@ -133,9 +133,9 @@ if __name__ == "__main__":
     response = pipe(
         messages,
         max_new_tokens=512,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=5
+        # do_sample=True,
+        # temperature=0.7,
+        # num_return_sequences=5
     )
     for i, r in enumerate(response):
         assistant_reply = next(
