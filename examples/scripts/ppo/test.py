@@ -127,7 +127,7 @@ if __name__ == "__main__":
     print(f"messages = {messages}")
     pipe = pipeline("text-generation", model=policy, tokenizer=tokenizer)
     response = pipe(messages, max_new_tokens=100, do_sample=False)
-    print(response[-1]["content"])
+    print(response[-1])
 
     # ###############
     # Dataset
