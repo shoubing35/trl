@@ -118,7 +118,7 @@ if __name__ == "__main__":
         ref_policy = None
 
     # charles inference test
-    from peft import PeftConfig, PeftModel, get_peft_model
+    from peft import get_peft_model
     peft_model = get_peft_model(policy, peft_config)
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
@@ -127,14 +127,13 @@ if __name__ == "__main__":
     outputs = peft_model.generate(
         **inputs,
         max_new_tokens=256,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=1,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=5,
     )
-
-    # Decode and print
-    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print("\n--- Assistant Reply ---\n" + decoded)
+    for i, output in enumerate(outputs):
+        decoded = tokenizer.decode(output, skip_special_tokens=True)
+        print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
 
     # ###############
     # Dataset
