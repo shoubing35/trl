@@ -130,11 +130,18 @@ if __name__ == "__main__":
     ]
     print(f"text_inference = \n{text_inference}")
     pipe = pipeline("text-generation", model=peft_policy, tokenizer=tokenizer)
-    response = pipe(messages, max_new_tokens=512, do_sample=False)
-    assistant_reply = next(
-        item['content'] for item in response[0]['generated_text'] if item['role'] == 'assistant'
+    response = pipe(
+        messages,
+        max_new_tokens=512,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=5
     )
-    print(f"assistant_reply = \n{assistant_reply}")
+    for i, r in enumerate(response):
+        assistant_reply = next(
+            item['content'] for item in r['generated_text'] if item['role'] == 'assistant'
+        )
+        print(f"\n--- Assistant Reply {i + 1} ---\n{assistant_reply}")
 
     # ###############
     # Dataset
