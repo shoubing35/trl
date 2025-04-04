@@ -109,15 +109,6 @@ if __name__ == "__main__":
     print("Reward model vocab size:", reward_model.config.vocab_size)  # charles debug
     print("Policy model vocab size:", policy.config.vocab_size)  # charles debug
 
-    # charles inference test
-    from transformers import pipeline
-
-    messages = [
-        {"role": "user", "content": "Who are you?"},
-    ]
-    pipe = pipeline("text-generation", model="meta-llama/Llama-3.2-1B-Instruct")
-    pipe(messages)
-
     peft_config = get_peft_config(model_args)
     if peft_config is None:
         ref_policy = AutoModelForCausalLM.from_pretrained(
@@ -125,6 +116,18 @@ if __name__ == "__main__":
         )
     else:
         ref_policy = None
+
+    # charles inference test
+    # from peft import PeftConfig, PeftModel, get_peft_model
+    # inference_model = get_peft_model(policy, peft_config)
+
+    from transformers import pipeline
+    messages = [
+        {"role": "user", "content": "Who are you?"},
+    ]
+    print(messages)
+    pipe = pipeline("text-generation", model=policy)
+    pipe(messages)
 
     # ###############
     # Dataset
