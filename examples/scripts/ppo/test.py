@@ -127,8 +127,10 @@ if __name__ == "__main__":
     print(f"messages = {messages}")
     pipe = pipeline("text-generation", model=policy, tokenizer=tokenizer)
     response = pipe(messages, max_new_tokens=100, do_sample=False)
-    print(response)
-    print(response[0][-1]["content"])
+    assistant_reply = next(
+        item['content'] for item in response[0]['generated_text'] if item['role'] == 'assistant'
+    )
+    print(assistant_reply)
 
     # ###############
     # Dataset
