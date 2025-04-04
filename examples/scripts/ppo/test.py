@@ -126,7 +126,7 @@ if __name__ == "__main__":
         {"role": "user", "content": "Who are you?"},
     ]
     print(messages)
-    pipe = pipeline("text-generation", model=policy)
+    pipe = pipeline("text-generation", model=policy, tokenizer=tokenizer)
     pipe(messages)
 
     # ###############
