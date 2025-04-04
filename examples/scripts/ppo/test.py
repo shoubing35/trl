@@ -120,14 +120,14 @@ if __name__ == "__main__":
     # charles inference test
     # from peft import PeftConfig, PeftModel, get_peft_model
     # inference_model = get_peft_model(policy, peft_config)
-
     from transformers import pipeline
     messages = [
         {"role": "user", "content": "Who are you?"},
     ]
-    print(messages)
+    print(f"messages = {messages}")
     pipe = pipeline("text-generation", model=policy, tokenizer=tokenizer)
-    pipe(messages)
+    response = pipe(messages, max_new_tokens=100, do_sample=False)[0]["generated_text"]
+    print(response[len(messages):].strip())
 
     # ###############
     # Dataset
