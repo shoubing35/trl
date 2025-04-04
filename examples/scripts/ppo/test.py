@@ -118,8 +118,8 @@ if __name__ == "__main__":
         ref_policy = None
 
     # charles inference test
-    # from peft import PeftConfig, PeftModel, get_peft_model
-    # inference_model = get_peft_model(policy, peft_config)
+    from peft import PeftConfig, PeftModel, get_peft_model
+    inference_model = get_peft_model(policy, peft_config)
     from transformers import pipeline
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
