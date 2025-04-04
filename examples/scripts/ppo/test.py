@@ -119,29 +119,22 @@ if __name__ == "__main__":
 
     # charles inference test
     from peft import PeftConfig, PeftModel, get_peft_model
-    peft_policy = get_peft_model(policy, peft_config)
-    from transformers import pipeline
+    peft_model = get_peft_model(policy, peft_config)
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
     text_inference = text_instr + "\n" + text_input
-    messages = [
-        {"role": "user",
-         "content": text_inference},
-    ]
-    print(f"text_inference = \n{text_inference}")
-    pipe = pipeline("text-generation", model=peft_policy, tokenizer=tokenizer)
-    response = pipe(
-        messages,
-        max_new_tokens=512,
-        # do_sample=True,
+    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
+    outputs = peft_model.generate(
+        **inputs,
+        max_new_tokens=256,
+        do_sample=False,
         # temperature=0.7,
-        # num_return_sequences=5
+        # num_return_sequences=1,
     )
-    for i, r in enumerate(response):
-        assistant_reply = next(
-            item['content'] for item in r['generated_text'] if item['role'] == 'assistant'
-        )
-        print(f"\n--- Assistant Reply {i + 1} ---\n{assistant_reply}")
+
+    # Decode and print
+    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    print("\n--- Assistant Reply ---\n" + decoded)
 
     # ###############
     # Dataset
