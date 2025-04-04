@@ -119,6 +119,9 @@ if __name__ == "__main__":
 
     # charles inference test
     from peft import get_peft_model
+    import torch
+    import torch
+    torch.manual_seed(42)
     peft_model = get_peft_model(policy, peft_config)
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
@@ -129,7 +132,7 @@ if __name__ == "__main__":
         max_new_tokens=512,
         do_sample=True,
         temperature=0.7,
-        num_return_sequences=5,
+        num_return_sequences=2,
     )
     for i, output in enumerate(outputs):
         decoded = tokenizer.decode(output, skip_special_tokens=True)
