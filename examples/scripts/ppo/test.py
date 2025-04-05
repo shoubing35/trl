@@ -140,86 +140,95 @@ if __name__ == "__main__":
 
     # charles + gpt:
     # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
-    # import itertools
-    # import pandas as pd
-    # from peft import get_peft_model
-    # import torch
-    #
-    # torch.manual_seed(42)
-    # peft_model = get_peft_model(policy, peft_config)
-    #
-    # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
-    # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
-    # text_inference = text_instr + "\n" + text_input
-    #
-    # # Generate completions
-    # inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
-    # outputs = peft_model.generate(
-    #     **inputs,
-    #     max_new_tokens=1024,
-    #     do_sample=True,
-    #     temperature=0.7,
-    #     num_return_sequences=5,
-    # )
-    #
-    # # Save completions
-    # completions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-    #
-    # # Create pairwise comparisons
-    # pairs = list(itertools.combinations(range(len(completions)), 2))
-    #
-    # data = []
-    # for i, j in pairs:
-    #     row = {
-    #         "prompt": text_input,
-    #         "A_index": i,
-    #         "A_response": completions[i],
-    #         "B_index": j,
-    #         "B_response": completions[j],
-    #         "preference": ""  # leave blank to fill manually
-    #     }
-    #     data.append(row)
-    #
-    # df = pd.DataFrame(data)
-    # csv_path = "/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv"
-    # df.to_csv(csv_path, index=False)
-    # print("CSV saved: pairwise_comparisons.csv")
+    import itertools
+    import pandas as pd
+    from peft import get_peft_model
+    import torch
+
+    torch.manual_seed(42)
+    peft_model = get_peft_model(policy, peft_config)
+
+    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    text_inference = text_instr + "\n" + text_input
+
+    # Generate completions
+    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
+    outputs = peft_model.generate(
+        **inputs,
+        max_new_tokens=1024,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=5,
+    )
+
+    # Save completions
+    # Figure out how many tokens were used for the prompt:
+    prompt_length = inputs["input_ids"].shape[1]
+
+    # Decode only tokens beyond the prompt
+    completions = []
+    for output in outputs:
+        # Slice off the prompt tokens to keep only the model’s response
+        response_tokens = output[prompt_length:]
+        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+        completions.append(response_text)
+
+    # Create pairwise comparisons
+    pairs = list(itertools.combinations(range(len(completions)), 2))
+
+    data = []
+    for i, j in pairs:
+        row = {
+            "prompt": text_inference,
+            "A_index": i,
+            "A_response": completions[i],
+            "B_index": j,
+            "B_response": completions[j],
+            "preference": ""  # leave blank to fill manually
+        }
+        data.append(row)
+
+    df = pd.DataFrame(data)
+    csv_path = "/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv"
+    df.to_csv(csv_path, index=False)
+    print("CSV saved: pairwise_comparisons.csv")
 
     # charles + gpt
     # Part 2: Process CSV and Extract Chosen & Rejected
-    from datasets import Dataset
-    import pandas as pd
-
-    def process_annotations_and_push_to_hub(csv_path, dataset_name):
-        df = pd.read_csv(csv_path)
-        rows = []
-
-        for _, row in df.iterrows():
-            if row["preference"] not in ("A", "B"):
-                continue  # Skip unannotated rows
-
-            prompt_entry = {"content": row["prompt"], "role": "user"}
-            response_a = {"content": row["A_response"], "role": "assistant"}
-            response_b = {"content": row["B_response"], "role": "assistant"}
-
-            if row["preference"] == "A":
-                chosen = [prompt_entry, response_a]
-                rejected = [prompt_entry, response_b]
-            else:
-                chosen = [prompt_entry, response_b]
-                rejected = [prompt_entry, response_a]
-
-            rows.append({"chosen": chosen, "rejected": rejected})
-
-        # Let Hugging Face infer the schema
-        dataset = Dataset.from_list(rows)
-
-        # Push to Hugging Face Hub
-        dataset.push_to_hub(dataset_name)
-        print(f"✅ Dataset pushed to: https://huggingface.co/datasets/{dataset_name}")
-
-    # call process-and-push function defined above
-    process_annotations_and_push_to_hub(
-        csv_path="/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv",
-        dataset_name="shoubing35/ones_digit_dataset"
-    )
+    # from datasets import Dataset
+    # import pandas as pd
+    #
+    # def process_annotations_and_push_to_hub(csv_path, dataset_name):
+    #     df = pd.read_csv(csv_path)
+    #     rows = []
+    #
+    #     for _, row in df.iterrows():
+    #         if row["preference"] not in ("A", "B"):
+    #             continue  # Skip unannotated rows
+    #
+    #         prompt_entry = {"content": row["prompt"], "role": "user"}
+    #         response_a = {"content": row["A_response"], "role": "assistant"}
+    #         response_b = {"content": row["B_response"], "role": "assistant"}
+    #
+    #         if row["preference"] == "A":
+    #             chosen = [prompt_entry, response_a]
+    #             rejected = [prompt_entry, response_b]
+    #         else:
+    #             chosen = [prompt_entry, response_b]
+    #             rejected = [prompt_entry, response_a]
+    #
+    #         rows.append({"chosen": chosen, "rejected": rejected})
+    #
+    #     # Let Hugging Face infer the schema
+    #     dataset = Dataset.from_list(rows)
+    #
+    #     # Push to Hugging Face Hub
+    #     dataset.push_to_hub(dataset_name)
+    #     print(f"✅ Dataset pushed to: https://huggingface.co/datasets/{dataset_name}")
+    #
+    # # call process-and-push function defined above
+    # process_annotations_and_push_to_hub(
+    #     csv_path="/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv",
+    #     dataset_name="shoubing35/ones_digit_dataset"
+    # )
