@@ -131,8 +131,8 @@ if __name__ == "__main__":
         **inputs,
         max_new_tokens=512,
         do_sample=False,
-        temperature=0.7,
-        num_return_sequences=5,
+        # temperature=0.7,
+        # num_return_sequences=5,
     )
     for i, output in enumerate(outputs):
         decoded = tokenizer.decode(output, skip_special_tokens=True)
