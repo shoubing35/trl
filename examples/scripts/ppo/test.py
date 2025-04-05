@@ -140,50 +140,50 @@ if __name__ == "__main__":
 
     # charles + gpt:
     # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
-    import itertools
-    import pandas as pd
-    from peft import get_peft_model
-    import torch
-
-    torch.manual_seed(42)
-    peft_model = get_peft_model(policy, peft_config)
-
-    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
-    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
-    text_inference = text_instr + "\n" + text_input
-
-    # Generate completions
-    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
-    outputs = peft_model.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=5,
-    )
-
-    # Save completions
-    completions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-
-    # Create pairwise comparisons
-    pairs = list(itertools.combinations(range(len(completions)), 2))
-
-    data = []
-    for i, j in pairs:
-        row = {
-            "prompt": text_input,
-            "A_index": i,
-            "A_response": completions[i],
-            "B_index": j,
-            "B_response": completions[j],
-            "preference": ""  # leave blank to fill manually
-        }
-        data.append(row)
-
-    df = pd.DataFrame(data)
-    csv_path = "/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv"
-    df.to_csv(csv_path, index=False)
-    print("CSV saved: pairwise_comparisons.csv")
+    # import itertools
+    # import pandas as pd
+    # from peft import get_peft_model
+    # import torch
+    #
+    # torch.manual_seed(42)
+    # peft_model = get_peft_model(policy, peft_config)
+    #
+    # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    # text_inference = text_instr + "\n" + text_input
+    #
+    # # Generate completions
+    # inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
+    # outputs = peft_model.generate(
+    #     **inputs,
+    #     max_new_tokens=1024,
+    #     do_sample=True,
+    #     temperature=0.7,
+    #     num_return_sequences=5,
+    # )
+    #
+    # # Save completions
+    # completions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+    #
+    # # Create pairwise comparisons
+    # pairs = list(itertools.combinations(range(len(completions)), 2))
+    #
+    # data = []
+    # for i, j in pairs:
+    #     row = {
+    #         "prompt": text_input,
+    #         "A_index": i,
+    #         "A_response": completions[i],
+    #         "B_index": j,
+    #         "B_response": completions[j],
+    #         "preference": ""  # leave blank to fill manually
+    #     }
+    #     data.append(row)
+    #
+    # df = pd.DataFrame(data)
+    # csv_path = "/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv"
+    # df.to_csv(csv_path, index=False)
+    # print("CSV saved: pairwise_comparisons.csv")
 
     # charles + gpt
     # Part 2: Process CSV and Extract Chosen & Rejected
@@ -215,4 +215,4 @@ if __name__ == "__main__":
         with open(output_path, "w") as f:
             json.dump(chosen_rejected_pairs, f, indent=2)
         print(f"Processed annotations saved to {output_path}")
-    # process_annotations(csv_path, output_path="processed_comparisons.json")
+    process_annotations(csv_path, output_path="processed_comparisons.json")
