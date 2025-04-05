@@ -118,25 +118,25 @@ if __name__ == "__main__":
         ref_policy = None
 
     # charles inference test
-    from peft import get_peft_model
-    import torch
-    import torch
-    torch.manual_seed(42)
-    peft_model = get_peft_model(policy, peft_config)
-    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
-    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
-    text_inference = text_instr + "\n" + text_input
-    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
-    outputs = peft_model.generate(
-        **inputs,
-        max_new_tokens=512,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=5,
-    )
-    for i, output in enumerate(outputs):
-        decoded = tokenizer.decode(output, skip_special_tokens=True)
-        print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
+    # from peft import get_peft_model
+    # import torch
+    # import torch
+    # torch.manual_seed(42)
+    # peft_model = get_peft_model(policy, peft_config)
+    # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    # text_inference = text_instr + "\n" + text_input
+    # inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
+    # outputs = peft_model.generate(
+    #     **inputs,
+    #     max_new_tokens=512,
+    #     do_sample=False,
+    #     # temperature=0.7,
+    #     # num_return_sequences=5,
+    # )
+    # for i, output in enumerate(outputs):
+    #     decoded = tokenizer.decode(output, skip_special_tokens=True)
+    #     print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
 
     # charles + gpt:
     # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
@@ -187,13 +187,16 @@ if __name__ == "__main__":
 
     # charles + gpt
     # Part 2: Process CSV and Extract Chosen & Rejected
-    def process_annotations(csv_path, output_path="processed_comparisons.json"):
+    from datasets import Dataset, Value, Sequence, Features
+    import pandas as pd
+
+    def process_annotations_and_push_to_hub(csv_path, dataset_name):
         df = pd.read_csv(csv_path)
-        chosen_rejected_pairs = []
+        rows = []
 
         for _, row in df.iterrows():
             if row["preference"] not in ("A", "B"):
-                continue  # Skip if not annotated
+                continue  # Skip unannotated rows
 
             prompt_entry = {"content": row["prompt"], "role": "user"}
             response_a = {"content": row["A_response"], "role": "assistant"}
@@ -206,13 +209,22 @@ if __name__ == "__main__":
                 chosen = [prompt_entry, response_b]
                 rejected = [prompt_entry, response_a]
 
-            chosen_rejected_pairs.append({
-                "chosen": chosen,
-                "rejected": rejected
-            })
+            rows.append({"chosen": chosen, "rejected": rejected})
 
-        import json
-        with open(output_path, "w") as f:
-            json.dump(chosen_rejected_pairs, f, indent=2)
-        print(f"Processed annotations saved to {output_path}")
-    process_annotations(csv_path, output_path="processed_comparisons.json")
+        # Define the dataset schema (optional but clearer)
+        features = Features({
+            "chosen": Sequence({"content": Value("string"), "role": Value("string")}),
+            "rejected": Sequence({"content": Value("string"), "role": Value("string")})
+        })
+
+        dataset = Dataset.from_list(rows, features=features)
+
+        # Push to Hugging Face Hub (make sure you are logged in via `huggingface-cli login`)
+        dataset.push_to_hub(dataset_name)
+        print(f"Dataset pushed to: https://huggingface.co/datasets/{dataset_name}")
+
+    # call process-and-push function defined above
+    process_annotations_and_push_to_hub(
+        csv_path="pairwise_comparisons.csv",
+        dataset_name="shoubing35/ones_digit_dataset"
+    )
