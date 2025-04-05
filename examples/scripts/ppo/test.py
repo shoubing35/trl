@@ -157,7 +157,7 @@ if __name__ == "__main__":
     outputs = peft_model.generate(
         **inputs,
         max_new_tokens=512,
-        do_sample=False,
+        do_sample=True,
         temperature=0.7,
         num_return_sequences=5,
     )
