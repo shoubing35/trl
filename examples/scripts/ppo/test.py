@@ -131,68 +131,86 @@ if __name__ == "__main__":
         **inputs,
         max_new_tokens=512,
         do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=2,
+        temperature=0.7,
+        num_return_sequences=5,
     )
     for i, output in enumerate(outputs):
         decoded = tokenizer.decode(output, skip_special_tokens=True)
         print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
 
-    # ###############
-    # Dataset
-    # ###############
-    # dataset = load_dataset(
-    #     script_args.dataset_name, name=script_args.dataset_config, split=script_args.dataset_train_split
-    # )
-    # eval_samples = 100
-    # train_dataset = dataset.select(range(len(dataset) - eval_samples))
-    # eval_dataset = dataset.select(range(len(dataset) - eval_samples, len(dataset)))
-    # dataset_text_field = "prompt"
+    # charles + gpt:
+    # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
+    import itertools
+    import pandas as pd
+    from peft import get_peft_model
+    import torch
+
+    torch.manual_seed(42)
+    peft_model = get_peft_model(policy, peft_config)
+
+    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    text_inference = text_instr + "\n" + text_input
+
+    # Generate completions
+    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
+    outputs = peft_model.generate(
+        **inputs,
+        max_new_tokens=512,
+        do_sample=False,
+        temperature=0.7,
+        num_return_sequences=5,
+    )
+
+    # Save completions
+    completions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+
+    # Create pairwise comparisons
+    pairs = list(itertools.combinations(range(len(completions)), 2))
+
+    data = []
+    for i, j in pairs:
+        row = {
+            "prompt": text_input,
+            "A_index": i,
+            "A_response": completions[i],
+            "B_index": j,
+            "B_response": completions[j],
+            "preference": ""  # leave blank to fill manually
+        }
+        data.append(row)
+
+    df = pd.DataFrame(data)
+    df.to_csv("pairwise_comparisons.csv", index=False)
+    print("CSV saved: pairwise_comparisons.csv")
+
+    # charles + gpt
+    # Part 2: Process CSV and Extract Chosen & Rejected
+    # def process_annotations(csv_path, output_path="processed_comparisons.json"):
+    #     df = pd.read_csv(csv_path)
+    #     chosen_rejected_pairs = []
     #
+    #     for _, row in df.iterrows():
+    #         if row["preference"] not in ("A", "B"):
+    #             continue  # Skip if not annotated
     #
-    # def prepare_dataset(dataset, tokenizer):
-    #     """pre-tokenize the dataset before training; only collate during training"""
+    #         prompt_entry = {"content": row["prompt"], "role": "user"}
+    #         response_a = {"content": row["A_response"], "role": "assistant"}
+    #         response_b = {"content": row["B_response"], "role": "assistant"}
     #
-    #     def tokenize(element):
-    #         outputs = tokenizer(
-    #             element[dataset_text_field],
-    #             padding=False,
-    #         )
-    #         return {"input_ids": outputs["input_ids"]}
+    #         if row["preference"] == "A":
+    #             chosen = [prompt_entry, response_a]
+    #             rejected = [prompt_entry, response_b]
+    #         else:
+    #             chosen = [prompt_entry, response_b]
+    #             rejected = [prompt_entry, response_a]
     #
-    #     return dataset.map(
-    #         tokenize,
-    #         batched=True,
-    #         remove_columns=dataset.column_names,
-    #         num_proc=training_args.dataset_num_proc,
-    #     )
+    #         chosen_rejected_pairs.append({
+    #             "chosen": chosen,
+    #             "rejected": rejected
+    #         })
     #
-    #
-    # # Compute that only on the main process for faster data processing.
-    # # see: https://github.com/huggingface/trl/pull/1255
-    # with PartialState().local_main_process_first():
-    #     train_dataset = prepare_dataset(train_dataset, tokenizer)
-    #     eval_dataset = prepare_dataset(eval_dataset, tokenizer)
-    #
-    # ################
-    # # Training
-    # ################
-    # trainer = PPOTrainer(
-    #     args=training_args,
-    #     processing_class=tokenizer,
-    #     model=policy,
-    #     ref_model=ref_policy,
-    #     reward_model=reward_model,
-    #     value_model=value_model,
-    #     train_dataset=train_dataset,
-    #     eval_dataset=eval_dataset,
-    #     peft_config=peft_config,
-    # )
-    # trainer.train()
-    #
-    # # Save and push to hub
-    # trainer.save_model(training_args.output_dir)
-    # if training_args.push_to_hub:
-    #     trainer.push_to_hub(dataset_name=script_args.dataset_name)
-    #
-    # trainer.generate_completions()
+    #     import json
+    #     with open(output_path, "w") as f:
+    #         json.dump(chosen_rejected_pairs, f, indent=2)
+    #     print(f"Processed annotations saved to {output_path}")
