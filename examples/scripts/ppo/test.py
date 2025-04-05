@@ -156,7 +156,7 @@ if __name__ == "__main__":
     inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
     outputs = peft_model.generate(
         **inputs,
-        max_new_tokens=512,
+        max_new_tokens=1024,
         do_sample=True,
         temperature=0.7,
         num_return_sequences=5,
