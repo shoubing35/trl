@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     # charles + gpt
     # Part 2: Process CSV and Extract Chosen & Rejected
-    from datasets import Dataset, Value, Sequence, Features
+    from datasets import Dataset
     import pandas as pd
 
     def process_annotations_and_push_to_hub(csv_path, dataset_name):
@@ -211,17 +211,12 @@ if __name__ == "__main__":
 
             rows.append({"chosen": chosen, "rejected": rejected})
 
-        # Define the dataset schema (optional but clearer)
-        features = Features({
-            "chosen": Sequence({"content": Value("string"), "role": Value("string")}),
-            "rejected": Sequence({"content": Value("string"), "role": Value("string")})
-        })
+        # Let Hugging Face infer the schema
+        dataset = Dataset.from_list(rows)
 
-        dataset = Dataset.from_list(rows, features=features)
-
-        # Push to Hugging Face Hub (make sure you are logged in via `huggingface-cli login`)
+        # Push to Hugging Face Hub
         dataset.push_to_hub(dataset_name)
-        print(f"Dataset pushed to: https://huggingface.co/datasets/{dataset_name}")
+        print(f"✅ Dataset pushed to: https://huggingface.co/datasets/{dataset_name}")
 
     # call process-and-push function defined above
     process_annotations_and_push_to_hub(
