@@ -225,6 +225,6 @@ if __name__ == "__main__":
 
     # call process-and-push function defined above
     process_annotations_and_push_to_hub(
-        csv_path="pairwise_comparisons.csv",
+        csv_path="/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv",
         dataset_name="shoubing35/ones_digit_dataset"
     )
