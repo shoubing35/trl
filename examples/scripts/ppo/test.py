@@ -181,36 +181,38 @@ if __name__ == "__main__":
         data.append(row)
 
     df = pd.DataFrame(data)
-    df.to_csv("pairwise_comparisons.csv", index=False)
+    csv_path = "/content/drive/MyDrive/Colab_Notebooks/my_dataset/pairwise_comparisons.csv"
+    df.to_csv(csv_path, index=False)
     print("CSV saved: pairwise_comparisons.csv")
 
     # charles + gpt
     # Part 2: Process CSV and Extract Chosen & Rejected
-    # def process_annotations(csv_path, output_path="processed_comparisons.json"):
-    #     df = pd.read_csv(csv_path)
-    #     chosen_rejected_pairs = []
-    #
-    #     for _, row in df.iterrows():
-    #         if row["preference"] not in ("A", "B"):
-    #             continue  # Skip if not annotated
-    #
-    #         prompt_entry = {"content": row["prompt"], "role": "user"}
-    #         response_a = {"content": row["A_response"], "role": "assistant"}
-    #         response_b = {"content": row["B_response"], "role": "assistant"}
-    #
-    #         if row["preference"] == "A":
-    #             chosen = [prompt_entry, response_a]
-    #             rejected = [prompt_entry, response_b]
-    #         else:
-    #             chosen = [prompt_entry, response_b]
-    #             rejected = [prompt_entry, response_a]
-    #
-    #         chosen_rejected_pairs.append({
-    #             "chosen": chosen,
-    #             "rejected": rejected
-    #         })
-    #
-    #     import json
-    #     with open(output_path, "w") as f:
-    #         json.dump(chosen_rejected_pairs, f, indent=2)
-    #     print(f"Processed annotations saved to {output_path}")
+    def process_annotations(csv_path, output_path="processed_comparisons.json"):
+        df = pd.read_csv(csv_path)
+        chosen_rejected_pairs = []
+
+        for _, row in df.iterrows():
+            if row["preference"] not in ("A", "B"):
+                continue  # Skip if not annotated
+
+            prompt_entry = {"content": row["prompt"], "role": "user"}
+            response_a = {"content": row["A_response"], "role": "assistant"}
+            response_b = {"content": row["B_response"], "role": "assistant"}
+
+            if row["preference"] == "A":
+                chosen = [prompt_entry, response_a]
+                rejected = [prompt_entry, response_b]
+            else:
+                chosen = [prompt_entry, response_b]
+                rejected = [prompt_entry, response_a]
+
+            chosen_rejected_pairs.append({
+                "chosen": chosen,
+                "rejected": rejected
+            })
+
+        import json
+        with open(output_path, "w") as f:
+            json.dump(chosen_rejected_pairs, f, indent=2)
+        print(f"Processed annotations saved to {output_path}")
+    # process_annotations(csv_path, output_path="processed_comparisons.json")
