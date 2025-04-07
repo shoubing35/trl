@@ -124,6 +124,11 @@ if __name__ == "__main__":
         # eval_dataset=dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None, # charles commented out
         peft_config=get_peft_config(model_args),
     )
+
+    print(f"Train dataset size: {len(train_dataset)}") # charles
+    print(f"Eval dataset size: {len(eval_dataset)}") # charles
+    print(f"Batch size: {training_args.per_device_train_batch_size}") # charles
+
     trainer.train()
 
     ############################
