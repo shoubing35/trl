@@ -203,6 +203,7 @@ class RewardTrainer(Trainer):
         # issued.
         model.warnings_issued["estimate_tokens"] = True
 
+        print(f"Train dataset size before filter: {len(train_dataset)}")  # charles
         if "input_ids_chosen" not in train_dataset.column_names:
             with PartialState().main_process_first():
                 fn_kwargs = {"tokenizer": processing_class}
