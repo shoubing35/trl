@@ -132,6 +132,9 @@ if __name__ == "__main__":
         peft_config=get_peft_config(model_args),
     )
 
+    import inspect # charles
+    print("[charles] RewardTrainer is from:", inspect.getfile(RewardTrainer)) # charles
+
     trainer.train()
 
     ############################
