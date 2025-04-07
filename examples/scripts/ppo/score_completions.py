@@ -130,7 +130,14 @@ if __name__ == "__main__":
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
 
-    rm_inputs = tokenizer(completions, return_tensors="pt", padding=True, truncation=True).to(reward_model.device)
+    # Score completions
+    rm_inputs = tokenizer(
+        completions,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=2048,
+    ).to(reward_model.device)
     with torch.no_grad():  # Get scores from reward model
         rm_outputs = reward_model(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
