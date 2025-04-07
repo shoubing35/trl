@@ -102,7 +102,7 @@ class RewardTrainer(Trainer):
         ),
         preprocess_logits_for_metrics: Optional[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
         peft_config: Optional[dict] = None,
-    ):
+    ) -> object:
         """
         Initialize RewardTrainer.
 
@@ -216,10 +216,13 @@ class RewardTrainer(Trainer):
                 # This filter is important because otherwise you get samples that exceed the model's context length and
                 # get truncated => noisy signal the chosen/rejected label gets lost. The downside is that the
                 # user might get surprised if N samples are missing from training.
+                print(f"Train dataset size before filter: {len(train_dataset)}")  # charles
                 train_dataset = train_dataset.filter(
                     lambda x: len(x["input_ids_chosen"]) <= max_length and len(x["input_ids_rejected"]) <= max_length,
                     num_proc=args.dataset_num_proc,
                 )
+                print(f"Train dataset size after filter: {len(train_dataset)}")  # charles
+
                 if eval_dataset is not None:
                     eval_dataset = eval_dataset.map(
                         maybe_apply_chat_template, fn_kwargs={"tokenizer": processing_class}
