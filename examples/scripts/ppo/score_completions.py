@@ -130,6 +130,9 @@ if __name__ == "__main__":
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
 
+    # debug index out of range
+    print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
+
     # Score completions
     rm_inputs = tokenizer(
         completions,
