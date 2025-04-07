@@ -103,6 +103,7 @@ class RewardTrainer(Trainer):
         preprocess_logits_for_metrics: Optional[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
         peft_config: Optional[dict] = None,
     ) -> object:
+        print("[charles] RewardTrainer __init__ called") # charles
         """
         Initialize RewardTrainer.
 
