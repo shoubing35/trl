@@ -103,7 +103,6 @@ class RewardTrainer(Trainer):
         preprocess_logits_for_metrics: Optional[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
         peft_config: Optional[dict] = None,
     ) -> object:
-        print("[charles] RewardTrainer __init__ called") # charles
         """
         Initialize RewardTrainer.
 
@@ -136,6 +135,7 @@ class RewardTrainer(Trainer):
             peft_config (`dict`, defaults to `None`):
                 The PEFT configuration to use for training. If you pass a PEFT configuration, the model will be wrapped in a PEFT model.
         """
+        print("[charles] RewardTrainer __init__ called")  # charles
         if not is_peft_available() and peft_config is not None:
             raise ValueError(
                 "PEFT is not installed and you passed a `peft_config` in the trainer's kwargs, please install it to use the PEFT models"
