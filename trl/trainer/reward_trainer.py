@@ -219,13 +219,19 @@ class RewardTrainer(Trainer):
                 # get truncated => noisy signal the chosen/rejected label gets lost. The downside is that the
                 # user might get surprised if N samples are missing from training.
                 print(f"Train dataset size before filter: {len(train_dataset)}")  # charles
+                for i, ex in enumerate(train_dataset): # charles
+                    print(
+                        f"Before filter - {i}: chosen={len(ex['input_ids_chosen'])}, rejected={len(ex['input_ids_rejected'])}")
                 train_dataset = train_dataset.filter(
                     lambda x: len(x["input_ids_chosen"]) <= max_length and len(x["input_ids_rejected"]) <= max_length,
                     num_proc=args.dataset_num_proc,
                     # num_proc=1, # charles: temporarily set to 1 for debugging
                 )
-                print(f"Train dataset size after filter: {train_dataset.num_rows}") # charles
+                # print(f"Train dataset size after filter: {train_dataset.num_rows}") # charles
                 print(f"Train dataset size after filter: {len(train_dataset)}")  # charles
+                for i, ex in enumerate(train_dataset): # charles
+                    print(
+                        f"After filter - {i}: chosen={len(ex['input_ids_chosen'])}, rejected={len(ex['input_ids_rejected'])}")
 
                 if eval_dataset is not None:
                     eval_dataset = eval_dataset.map(
