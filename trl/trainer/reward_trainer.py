@@ -219,9 +219,10 @@ class RewardTrainer(Trainer):
                 print(f"Train dataset size before filter: {len(train_dataset)}")  # charles
                 train_dataset = train_dataset.filter(
                     lambda x: len(x["input_ids_chosen"]) <= max_length and len(x["input_ids_rejected"]) <= max_length,
-                    # num_proc=args.dataset_num_proc,
-                    num_proc=1, # charles: temporarily set to 1 for debugging
+                    num_proc=args.dataset_num_proc,
+                    # num_proc=1, # charles: temporarily set to 1 for debugging
                 )
+                print(f"Train dataset size after filter: {train_dataset.num_rows}") # charles
                 print(f"Train dataset size after filter: {len(train_dataset)}")  # charles
 
                 if eval_dataset is not None:
