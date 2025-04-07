@@ -88,6 +88,11 @@ if __name__ == "__main__":
     model = AutoModelForSequenceClassification.from_pretrained(
         model_args.model_name_or_path, num_labels=1, trust_remote_code=model_args.trust_remote_code, **model_kwargs
     )
+
+    # charles
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token  # Use EOS if no PAD token
+
     # Align padding tokens between tokenizer and model
     model.config.pad_token_id = tokenizer.pad_token_id
 
