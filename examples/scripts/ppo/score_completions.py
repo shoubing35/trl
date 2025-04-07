@@ -113,9 +113,9 @@ if __name__ == "__main__":
     outputs = peft_model.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=5,
+        do_sample=False,
+        # temperature=0.7,
+        # num_return_sequences=5,
     )
 
     # Save completions
