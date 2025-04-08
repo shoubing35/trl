@@ -120,7 +120,13 @@ if __name__ == "__main__":
     import torch
 
     torch.manual_seed(42)
-    peft_model = get_peft_model(policy, peft_config)
+
+    # set up for TRAINING
+    # peft_model = get_peft_model(policy, peft_config)
+
+    # set up for LOADING
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
+    peft_model = PeftModel.from_pretrained(policy, adapter_path)
 
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
