@@ -112,57 +112,56 @@ if __name__ == "__main__":
     #     decoded = tokenizer.decode(output, skip_special_tokens=True)
     #     print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
 
-"""
-    # Generate completions locally
-    # charles + gpt:
-    # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
-    import itertools
-    import pandas as pd
-
-    # Set seed for reproducibility
-    import random
-    import numpy as np
-    import torch
-    seed = 42
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.use_deterministic_algorithms(True)  # Enforce determinism
-
-    # Create peft model
-    from peft import get_peft_model
-    peft_policy = get_peft_model(policy, peft_config)
-
-    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
-    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
-    text_inference = text_instr + "\n" + text_input
-
-    # Generate completions
-    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_policy.device)
-    outputs = peft_policy.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=2,
-    )
-
-    # Save completions
-    # Figure out how many tokens were used for the prompt:
-    prompt_length = inputs["input_ids"].shape[1]
-
-    # Decode only tokens beyond the prompt
-    completions = []
-    for output in outputs:
-        # Slice off the prompt tokens to keep only the model’s response
-        response_tokens = output[prompt_length:]
-        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-        completions.append(response_text)
-
-    # debug index out of range
-    print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
-"""
+    #
+    # # Generate completions locally
+    # # charles + gpt:
+    # # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
+    # import itertools
+    # import pandas as pd
+    #
+    # # Set seed for reproducibility
+    # import random
+    # import numpy as np
+    # import torch
+    # seed = 42
+    # random.seed(seed)
+    # np.random.seed(seed)
+    # torch.manual_seed(seed)
+    # torch.cuda.manual_seed_all(seed)
+    # torch.use_deterministic_algorithms(True)  # Enforce determinism
+    #
+    # # Create peft model
+    # from peft import get_peft_model
+    # peft_policy = get_peft_model(policy, peft_config)
+    #
+    # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    # text_inference = text_instr + "\n" + text_input
+    #
+    # # Generate completions
+    # inputs = tokenizer(text_inference, return_tensors="pt").to(peft_policy.device)
+    # outputs = peft_policy.generate(
+    #     **inputs,
+    #     max_new_tokens=1024,
+    #     do_sample=True,
+    #     temperature=0.7,
+    #     num_return_sequences=2,
+    # )
+    #
+    # # Save completions
+    # # Figure out how many tokens were used for the prompt:
+    # prompt_length = inputs["input_ids"].shape[1]
+    #
+    # # Decode only tokens beyond the prompt
+    # completions = []
+    # for output in outputs:
+    #     # Slice off the prompt tokens to keep only the model’s response
+    #     response_tokens = output[prompt_length:]
+    #     response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+    #     completions.append(response_text)
+    #
+    # # debug index out of range
+    # print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
 
     # Load completions from csv
     import pandas as pd
