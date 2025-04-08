@@ -158,6 +158,9 @@ if __name__ == "__main__":
         tokens = tokenizer.encode(text, truncation=True, max_length=max_tokens)
         return tokenizer.decode(tokens, skip_special_tokens=True)
     completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
+    for i, completion in enumerate(completions):  # Print completions and their scores
+        print(f"\n--- Completion {i + 1} ---")
+        print(completion)
 
     max_len = min(reward_model.config.max_position_embeddings, 2048)
     rm_inputs = tokenizer(
@@ -176,6 +179,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         rm_outputs = reward_model(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
+    print("Before training:")
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
@@ -191,6 +195,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         rm_outputs = peft_reward(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
+    print("After training:")
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
