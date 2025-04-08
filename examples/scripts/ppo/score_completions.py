@@ -159,11 +159,6 @@ if __name__ == "__main__":
         return tokenizer.decode(tokens, skip_special_tokens=True)
     completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
 
-    # Load trained rm
-    from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
-    peft_reward = PeftModel.from_pretrained(reward_model, adapter_path)
-
     max_len = min(reward_model.config.max_position_embeddings, 2048)
     rm_inputs = tokenizer(
         completions,
@@ -185,6 +180,11 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
         print(f"Reward score: {score:.4f}")
+
+    # Load trained rm
+    from peft import PeftModel
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
+    peft_reward = PeftModel.from_pretrained(reward_model, adapter_path)
 
     # Score completions after training
     rm_inputs.to(peft_reward.device)
