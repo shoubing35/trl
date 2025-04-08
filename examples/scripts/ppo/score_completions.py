@@ -183,7 +183,7 @@ if __name__ == "__main__":
     )
 
     print(rm_inputs["input_ids"].shape) # charles
-    print(rm_inputs["input_ids"]) # charles
+    # print(rm_inputs["input_ids"]) # charles
 
     # Score completions before training
     rm_inputs.to(reward_model.device)
