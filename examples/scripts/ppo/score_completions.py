@@ -143,7 +143,7 @@ if __name__ == "__main__":
         max_new_tokens=1024,
         do_sample=True,
         temperature=0.7,
-        num_return_sequences=5,
+        num_return_sequences=2,
     )
 
     # Save completions
