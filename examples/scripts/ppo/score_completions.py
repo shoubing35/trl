@@ -47,7 +47,11 @@ if __name__ == "__main__":
     )
     # if tokenizer.pad_token is None: # charles
     #     tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.add_special_tokens({"pad_token": "[PAD]"}) # charles: suspect of giving index out of range error
+    # tokenizer.add_special_tokens({"pad_token": "[PAD]"}) # charles: suspect of giving index out of range error
+    if tokenizer.pad_token is None: # charles
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    tokenizer.pad_token_id = tokenizer.convert_tokens_to_ids(tokenizer.pad_token) # explicitly set pad_token_id
+
     print(f"pad_token = {tokenizer.pad_token}") # charles
     print(f"pad_token_id = {tokenizer.pad_token_id}") # charles
 
