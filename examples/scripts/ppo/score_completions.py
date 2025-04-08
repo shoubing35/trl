@@ -128,7 +128,8 @@ if __name__ == "__main__":
     torch.cuda.manual_seed_all(seed)
     torch.use_deterministic_algorithms(True)  # Enforce determinism
 
-    # set up for TRAINING
+    # Create peft model
+    from peft import get_peft_model
     peft_policy = get_peft_model(policy, peft_config)
 
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
