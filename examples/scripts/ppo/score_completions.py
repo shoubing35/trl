@@ -122,20 +122,15 @@ if __name__ == "__main__":
     torch.manual_seed(42)
 
     # set up for TRAINING
-    # peft_model = get_peft_model(policy, peft_config)
-
-    # set up for LOADING
-    from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
-    peft_model = PeftModel.from_pretrained(policy, adapter_path)
+    peft_policy = get_peft_model(policy, peft_config)
 
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
     text_inference = text_instr + "\n" + text_input
 
     # Generate completions
-    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_model.device)
-    outputs = peft_model.generate(
+    inputs = tokenizer(text_inference, return_tensors="pt").to(peft_policy.device)
+    outputs = peft_policy.generate(
         **inputs,
         max_new_tokens=1024,
         do_sample=True,
@@ -165,6 +160,10 @@ if __name__ == "__main__":
     completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
 
     # Score completions
+    # set up for LOADING
+    from peft import PeftModel
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
+    peft_reward = PeftModel.from_pretrained(reward_model, adapter_path)
     max_len = min(reward_model.config.max_position_embeddings, 2048)
     rm_inputs = tokenizer(
         completions,
@@ -172,11 +171,11 @@ if __name__ == "__main__":
         padding=True,
         truncation=True,
         max_length=max_len,
-    ).to(reward_model.device)
+    ).to(peft_reward.device)
     print(rm_inputs["input_ids"].shape)
     print(rm_inputs["input_ids"])
     with torch.no_grad():  # Get scores from reward model
-        rm_outputs = reward_model(**rm_inputs)
+        rm_outputs = peft_reward(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
