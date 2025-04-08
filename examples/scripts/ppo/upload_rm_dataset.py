@@ -4,8 +4,8 @@ from datasets import Dataset
 import pandas as pd
 
 def process_annotations_and_push_to_hub(csv_path, dataset_name):
+    print(f"csv_path = {csv_path}")  # charles
     df = pd.read_csv(csv_path)
-    print(f"csv_path = {csv_path}") # charles
     df.head() # charles
     rows = []
 
