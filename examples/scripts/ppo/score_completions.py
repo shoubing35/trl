@@ -133,9 +133,9 @@ if __name__ == "__main__":
     outputs = peft_policy.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=5,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=5,
     )
 
     # Save completions
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
-        print(f"Reward score: {score:.4f}")
+        print(f"Reward score: {score:.2f}")
 
     # Load trained rm
     from peft import PeftModel
