@@ -148,6 +148,8 @@ if __name__ == "__main__":
         truncation=True,
         max_length=max_len,
     ).to(reward_model.device)
+    print(rm_inputs["input_ids"].shape)
+    print(rm_inputs["input_ids"])
     with torch.no_grad():  # Get scores from reward model
         rm_outputs = reward_model(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
