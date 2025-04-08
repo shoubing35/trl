@@ -159,11 +159,11 @@ if __name__ == "__main__":
         return tokenizer.decode(tokens, skip_special_tokens=True)
     completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
 
-    # Score completions
-    # set up for LOADING
+    # Load trained rm
     from peft import PeftModel
     adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
     peft_reward = PeftModel.from_pretrained(reward_model, adapter_path)
+
     max_len = min(reward_model.config.max_position_embeddings, 2048)
     rm_inputs = tokenizer(
         completions,
@@ -171,13 +171,27 @@ if __name__ == "__main__":
         padding=True,
         truncation=True,
         max_length=max_len,
-    ).to(peft_reward.device)
-    print(rm_inputs["input_ids"].shape)
-    print(rm_inputs["input_ids"])
-    with torch.no_grad():  # Get scores from reward model
+    )
+
+    print(rm_inputs["input_ids"].shape) # charles
+    print(rm_inputs["input_ids"]) # charles
+
+    # Score completions before training
+    rm_inputs.to(reward_model.device)
+    with torch.no_grad():
+        rm_outputs = reward_model(**rm_inputs)
+        rm_scores = rm_outputs.logits.squeeze(-1).tolist()
+    for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
+        print(f"\n--- Completion {i + 1} ---")
+        # print(text)
+        print(f"Reward score: {score:.4f}")
+
+    # Score completions after training
+    rm_inputs.to(peft_reward.device)
+    with torch.no_grad():
         rm_outputs = peft_reward(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
-        print(text)
+        # print(text)
         print(f"Reward score: {score:.4f}")
