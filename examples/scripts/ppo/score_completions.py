@@ -125,6 +125,7 @@ if __name__ == "__main__":
     # peft_model = get_peft_model(policy, peft_config)
 
     # set up for LOADING
+    from peft import PeftModel
     adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-Reward-LoRA"
     peft_model = PeftModel.from_pretrained(policy, adapter_path)
 
