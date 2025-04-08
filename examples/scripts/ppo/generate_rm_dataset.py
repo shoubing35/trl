@@ -145,7 +145,16 @@ if __name__ == "__main__":
     from peft import get_peft_model
     import torch
 
-    torch.manual_seed(42)
+    # Set seed for reproducibility
+    import random
+    import numpy as np
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)  # Enforce determinism
+
     peft_model = get_peft_model(policy, peft_config)
 
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
@@ -159,7 +168,7 @@ if __name__ == "__main__":
         max_new_tokens=1024,
         do_sample=True,
         temperature=0.7,
-        num_return_sequences=5,
+        num_return_sequences=2,
     )
 
     # Save completions
@@ -173,6 +182,9 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
+    for i, completion in enumerate(completions):  # Print completions and their scores
+        print(f"\n--- Completion {i + 1} ---")
+        print(completion)
 
     # Create pairwise comparisons
     pairs = list(itertools.combinations(range(len(completions)), 2))

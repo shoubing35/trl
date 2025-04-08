@@ -162,10 +162,10 @@ if __name__ == "__main__":
     print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
 
     # truncate shizzles
-    def truncate_completion(text, tokenizer, max_tokens=2048):
-        tokens = tokenizer.encode(text, truncation=True, max_length=max_tokens)
-        return tokenizer.decode(tokens, skip_special_tokens=True)
-    completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
+    # def truncate_completion(text, tokenizer, max_tokens=2048):
+    #     tokens = tokenizer.encode(text, truncation=True, max_length=max_tokens)
+    #     return tokenizer.decode(tokens, skip_special_tokens=True)
+    # completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
