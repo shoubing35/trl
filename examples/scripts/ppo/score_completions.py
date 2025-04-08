@@ -45,9 +45,11 @@ if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.model_name_or_path, padding_side="left", trust_remote_code=model_args.trust_remote_code
     )
-    if tokenizer.pad_token is None: # charles
-        tokenizer.pad_token = tokenizer.eos_token
-    # tokenizer.add_special_tokens({"pad_token": "[PAD]"}) # charles: suspect of giving index out of range error
+    # if tokenizer.pad_token is None: # charles
+    #     tokenizer.pad_token = tokenizer.eos_token
+    # print(f"pad_token = {tokenizer.pad_token}")
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"}) # charles: suspect of giving index out of range error
+
     if tokenizer.chat_template is None:
         tokenizer.chat_template = SIMPLE_CHAT_TEMPLATE
 
@@ -62,6 +64,11 @@ if __name__ == "__main__":
     policy = AutoModelForCausalLM.from_pretrained(
         training_args.sft_model_path, trust_remote_code=model_args.trust_remote_code
     )
+
+    # charles: resize tokenizer to prevent index out of range error
+    reward_model.resize_token_embeddings(len(tokenizer))
+    value_model.resize_token_embeddings(len(tokenizer))
+    policy.resize_token_embeddings(len(tokenizer))
 
     print("Value model vocab size:", value_model.config.vocab_size)  # charles debug
     print("Reward model vocab size:", reward_model.config.vocab_size)  # charles debug
