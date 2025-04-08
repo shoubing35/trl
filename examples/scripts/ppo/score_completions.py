@@ -70,6 +70,10 @@ if __name__ == "__main__":
         training_args.sft_model_path, trust_remote_code=model_args.trust_remote_code
     )
 
+    # charles: Set pad_token_id in model configs explicitly
+    reward_model.config.pad_token_id = tokenizer.pad_token_id
+    value_model.config.pad_token_id = tokenizer.pad_token_id
+    policy.config.pad_token_id = tokenizer.pad_token_id
     # charles: resize tokenizer to prevent index out of range error
     reward_model.resize_token_embeddings(len(tokenizer))
     value_model.resize_token_embeddings(len(tokenizer))
