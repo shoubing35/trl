@@ -116,10 +116,17 @@ if __name__ == "__main__":
     # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
     import itertools
     import pandas as pd
-    from peft import get_peft_model
-    import torch
 
-    torch.manual_seed(42)
+    # Set seed for reproducibility
+    import random
+    import numpy as np
+    import torch
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)  # Enforce determinism
 
     # set up for TRAINING
     peft_policy = get_peft_model(policy, peft_config)
@@ -135,7 +142,8 @@ if __name__ == "__main__":
         max_new_tokens=1024,
         do_sample=True,
         temperature=0.7,
-        num_return_sequences=5,
+        num_return_sequences=2,
+        seed=seed, # set random seed for reproducibility
     )
 
     # Save completions
@@ -179,7 +187,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         rm_outputs = reward_model(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
-    print("Before training:")
+    print("\nBefore training:")
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
@@ -195,7 +203,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         rm_outputs = peft_reward(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
-    print("After training:")
+    print("\nAfter training:")
     for i, (text, score) in enumerate(zip(completions, rm_scores)):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         # print(text)
