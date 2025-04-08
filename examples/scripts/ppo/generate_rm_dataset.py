@@ -186,6 +186,16 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
 
+    # Save completions with prompt (optional)
+    import pandas as pd
+    df = pd.DataFrame({
+        "prompt": [text_inference] * len(completions),
+        "completion": completions,
+    })
+    csv_path = "/content/drive/MyDrive/Colab_Notebooks/completions.csv"
+    df.to_csv(csv_path, index=False)
+    print(f"Completions saved to: {csv_path}")
+
     # Create pairwise comparisons
     pairs = list(itertools.combinations(range(len(completions)), 2))
 

@@ -112,6 +112,8 @@ if __name__ == "__main__":
     #     decoded = tokenizer.decode(output, skip_special_tokens=True)
     #     print(f"\n--- Assistant Reply {i + 1} ---\n{decoded}")
 
+"""
+    # Generate completions locally
     # charles + gpt:
     # Part 1: Generate 5 Prompts and Create 10 Pairwise Comparisons in a CSV
     import itertools
@@ -160,12 +162,14 @@ if __name__ == "__main__":
 
     # debug index out of range
     print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
+"""
 
-    # truncate shizzles
-    # def truncate_completion(text, tokenizer, max_tokens=2048):
-    #     tokens = tokenizer.encode(text, truncation=True, max_length=max_tokens)
-    #     return tokenizer.decode(tokens, skip_special_tokens=True)
-    # completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
+    # Load completions from csv
+    import pandas as pd
+    csv_path = "/content/drive/MyDrive/Colab_Notebooks/completions.csv"
+    df = pd.read_csv(csv_path)
+    completions = df["completion"].tolist()
+    text_inference = df["prompt"].iloc[0]  # Load the shared prompt (optional)
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
