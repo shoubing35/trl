@@ -5,6 +5,8 @@ import pandas as pd
 
 def process_annotations_and_push_to_hub(csv_path, dataset_name):
     df = pd.read_csv(csv_path)
+    print(f"csv_path = {csv_path}") # charles
+    df.head() # charles
     rows = []
 
     for _, row in df.iterrows():
