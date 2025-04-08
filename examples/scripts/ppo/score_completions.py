@@ -113,9 +113,9 @@ if __name__ == "__main__":
     outputs = peft_model.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=5,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=5,
     )
 
     # Save completions
@@ -133,13 +133,20 @@ if __name__ == "__main__":
     # debug index out of range
     print("Reward model max position embeddings:", reward_model.config.max_position_embeddings)
 
+    # truncate shizzles
+    def truncate_completion(text, tokenizer, max_tokens=2048):
+        tokens = tokenizer.encode(text, truncation=True, max_length=max_tokens)
+        return tokenizer.decode(tokens, skip_special_tokens=True)
+    completions = [truncate_completion(c, tokenizer, 2048) for c in completions]
+
     # Score completions
+    max_len = min(reward_model.config.max_position_embeddings, 2048)
     rm_inputs = tokenizer(
         completions,
         return_tensors="pt",
         padding=True,
         truncation=True,
-        max_length=2048,
+        max_length=max_len,
     ).to(reward_model.device)
     with torch.no_grad():  # Get scores from reward model
         rm_outputs = reward_model(**rm_inputs)
