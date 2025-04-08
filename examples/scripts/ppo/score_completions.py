@@ -47,8 +47,9 @@ if __name__ == "__main__":
     )
     # if tokenizer.pad_token is None: # charles
     #     tokenizer.pad_token = tokenizer.eos_token
-    # print(f"pad_token = {tokenizer.pad_token}")
     tokenizer.add_special_tokens({"pad_token": "[PAD]"}) # charles: suspect of giving index out of range error
+    print(f"pad_token = {tokenizer.pad_token}") # charles
+    print(f"pad_token_id = {tokenizer.pad_token_id}") # charles
 
     if tokenizer.chat_template is None:
         tokenizer.chat_template = SIMPLE_CHAT_TEMPLATE
