@@ -129,6 +129,8 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     torch.use_deterministic_algorithms(True)  # Enforce determinism
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     #
     # # Create peft model
     # from peft import get_peft_model
