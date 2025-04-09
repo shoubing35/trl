@@ -119,16 +119,16 @@ if __name__ == "__main__":
     # import itertools
     # import pandas as pd
     #
-    # # Set seed for reproducibility
-    # import random
-    # import numpy as np
-    # import torch
-    # seed = 42
-    # random.seed(seed)
-    # np.random.seed(seed)
-    # torch.manual_seed(seed)
-    # torch.cuda.manual_seed_all(seed)
-    # torch.use_deterministic_algorithms(True)  # Enforce determinism
+    # Set seed for reproducibility
+    import random
+    import numpy as np
+    import torch
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)  # Enforce determinism
     #
     # # Create peft model
     # from peft import get_peft_model
