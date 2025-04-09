@@ -57,6 +57,7 @@ def main(script_args, training_args, model_args):
     if tokenizer.pad_token is None: # charles
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     tokenizer.pad_token_id = tokenizer.convert_tokens_to_ids(tokenizer.pad_token) # explicitly set pad_token_i
+    print(f"tokenizer.chat_template = {tokenizer.chat_template}") # charles debug
 
     # Load the dataset
     dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
