@@ -70,7 +70,7 @@ if __name__ == "__main__":
     script_args, training_args, model_args = parser.parse_args_into_dataclasses()
     # remove output_dir if exists
     shutil.rmtree(training_args.output_dir, ignore_errors=True)
-    
+
     # Set seed for reproducibility
     import random
     import numpy as np
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
 
-    # Save completions with prompt (optional)
+    # Save completions with prompt (to be used by score_completions.py)
     import pandas as pd
     df = pd.DataFrame({
         "prompt": [text_inference] * len(completions),
@@ -202,7 +202,8 @@ if __name__ == "__main__":
     data = []
     for i, j in pairs:
         row = {
-            "prompt": text_inference,
+            "system": text_instr,
+            "prompt": text_input,
             "A_index": i,
             "A_response": completions[i],
             "B_index": j,
