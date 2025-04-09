@@ -187,6 +187,7 @@ if __name__ == "__main__":
 
     # Score completions before training
     rm_inputs.to(reward_model.device)
+    reward_model.eval() # charles
     with torch.no_grad():
         rm_outputs = reward_model(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
@@ -203,6 +204,7 @@ if __name__ == "__main__":
 
     # Score completions after training
     rm_inputs.to(peft_reward.device)
+    peft_reward.eval() # charles
     with torch.no_grad():
         rm_outputs = peft_reward(**rm_inputs)
         rm_scores = rm_outputs.logits.squeeze(-1).tolist()
