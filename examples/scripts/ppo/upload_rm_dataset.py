@@ -24,7 +24,7 @@ def process_annotations_and_push_to_hub(csv_path, dataset_name):
             chosen = [prompt_entry, response_b]
             rejected = [prompt_entry, response_a]
 
-        rows.append({"chosen": chosen, "rejected": rejected})
+        rows.append({"chosen": chosen, "rejected": rejected, "prompt": prompt_entry})
 
     # Let Hugging Face infer the schema
     dataset = Dataset.from_list(rows)

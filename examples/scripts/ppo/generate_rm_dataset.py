@@ -70,6 +70,16 @@ if __name__ == "__main__":
     script_args, training_args, model_args = parser.parse_args_into_dataclasses()
     # remove output_dir if exists
     shutil.rmtree(training_args.output_dir, ignore_errors=True)
+    
+    # Set seed for reproducibility
+    import random
+    import numpy as np
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)  # Enforce determinism
 
     ################
     # Model & Tokenizer
@@ -144,16 +154,6 @@ if __name__ == "__main__":
     import pandas as pd
     from peft import get_peft_model
     import torch
-
-    # Set seed for reproducibility
-    import random
-    import numpy as np
-    seed = 42
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.use_deterministic_algorithms(True)  # Enforce determinism
 
     peft_model = get_peft_model(policy, peft_config)
 
