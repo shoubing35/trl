@@ -13,6 +13,7 @@ def process_annotations_and_push_to_hub(csv_path, dataset_name):
         if row["preference"] not in ("A", "B"):
             continue  # Skip unannotated rows
 
+        system_entry = {"content": row["system"], "role": "system"}
         prompt_entry = {"content": row["prompt"], "role": "user"}
         response_a = {"content": row["A_response"], "role": "assistant"}
         response_b = {"content": row["B_response"], "role": "assistant"}
@@ -24,7 +25,7 @@ def process_annotations_and_push_to_hub(csv_path, dataset_name):
             chosen = [prompt_entry, response_b]
             rejected = [prompt_entry, response_a]
 
-        rows.append({"prompt": [prompt_entry], "chosen": chosen, "rejected": rejected})
+        rows.append({"prompt": [system_entry, prompt_entry], "chosen": chosen, "rejected": rejected})
 
     # Let Hugging Face infer the schema
     dataset = Dataset.from_list(rows)
