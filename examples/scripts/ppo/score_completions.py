@@ -27,6 +27,19 @@ if __name__ == "__main__":
     # remove output_dir if exists
     shutil.rmtree(training_args.output_dir, ignore_errors=True)
 
+    # Set seed for reproducibility
+    import random
+    import numpy as np
+    import torch
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)  # Enforce determinism
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
     ################
     # Model & Tokenizer
     ################
@@ -119,18 +132,18 @@ if __name__ == "__main__":
     # import itertools
     # import pandas as pd
     #
-    # Set seed for reproducibility
-    import random
-    import numpy as np
-    import torch
-    seed = 42
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.use_deterministic_algorithms(True)  # Enforce determinism
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+    # # Set seed for reproducibility
+    # import random
+    # import numpy as np
+    # import torch
+    # seed = 42
+    # random.seed(seed)
+    # np.random.seed(seed)
+    # torch.manual_seed(seed)
+    # torch.cuda.manual_seed_all(seed)
+    # torch.use_deterministic_algorithms(True)  # Enforce determinism
+    # torch.backends.cudnn.deterministic = True
+    # torch.backends.cudnn.benchmark = False
     #
     # # Create peft model
     # from peft import get_peft_model
