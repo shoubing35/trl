@@ -19,11 +19,11 @@ def process_annotations_and_push_to_hub(csv_path, dataset_name):
         response_b = {"content": row["B_response"], "role": "assistant"}
 
         if row["preference"] == "A":
-            chosen = [prompt_entry, response_a]
-            rejected = [prompt_entry, response_b]
+            chosen = [response_a]
+            rejected = [response_b]
         else:
-            chosen = [prompt_entry, response_b]
-            rejected = [prompt_entry, response_a]
+            chosen = [response_b]
+            rejected = [response_a]
 
         rows.append({"prompt": [system_entry, prompt_entry], "chosen": chosen, "rejected": rejected})
 
