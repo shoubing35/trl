@@ -29,6 +29,8 @@ def process_annotations_and_push_to_hub(csv_path, dataset_name):
 
     # Let Hugging Face infer the schema
     dataset = Dataset.from_list(rows)
+    print("\n📊 Dataset preview (first few rows):") # debug
+    print(dataset[:3])  # debug
 
     # Push to Hugging Face Hub
     dataset.push_to_hub(dataset_name)
