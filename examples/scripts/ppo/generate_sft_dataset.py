@@ -136,6 +136,8 @@ if __name__ == "__main__":
 
     peft_model = get_peft_model(policy, peft_config)
 
+    # Generate 1 example
+    from datasets import Dataset
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"] + "\n" + df["text_label"]
     df = df[["text"]]  # keep only the 'text' column
