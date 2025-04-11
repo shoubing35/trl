@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # charles: added for baseline
     base_model = AutoModelForCausalLM.from_pretrained(
-        training_args.model_name_or_path, trust_remote_code=model_args.trust_remote_code
+        model_args.model_name_or_path, trust_remote_code=model_args.trust_remote_code
     )
 
     print("Value model vocab size:", value_model.config.vocab_size)  # charles debug
