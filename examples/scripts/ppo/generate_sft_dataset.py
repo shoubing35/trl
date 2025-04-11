@@ -136,7 +136,7 @@ if __name__ == "__main__":
 
     peft_model = get_peft_model(policy, peft_config)
 
-    df = pd.read_csv("/content/drive/MyDrive/my_dataset/sft_dataset.csv")
+    df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df.head()
 
     # # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
