@@ -115,6 +115,11 @@ if __name__ == "__main__":
         training_args.sft_model_path, trust_remote_code=model_args.trust_remote_code
     )
 
+    # charles: added for baseline
+    base_model = AutoModelForCausalLM.from_pretrained(
+        training_args.model_name_or_path, trust_remote_code=model_args.trust_remote_code
+    )
+
     print("Value model vocab size:", value_model.config.vocab_size)  # charles debug
     print("Reward model vocab size:", reward_model.config.vocab_size)  # charles debug
     print("Policy model vocab size:", policy.config.vocab_size)  # charles debug
@@ -140,11 +145,11 @@ if __name__ == "__main__":
     # Craete fresh peft model (for loading in 8-bit)
     from peft import get_peft_model
     import torch
-    peft_model = get_peft_model(policy, peft_config)
-    peft_model.eval()
-    inputs.to(peft_model.device) # Create fresh peft model
+    peft_base = get_peft_model(base_model, peft_config)
+    peft_base.eval()
+    inputs.to(peft_base.device) # Create fresh peft model
 
-    outputs = peft_model.generate(
+    outputs = peft_base.generate(
         **inputs,
         max_new_tokens=1024,
         do_sample=True,
@@ -162,22 +167,23 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
+    print("Base Model Inference:\n")
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
 
     ################
-    # Generate completions after training
+    # Generate completions after sft training
     ################
 
-    # Load trained peft model
+    # Load sft-trained peft model
     from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-grpo"
-    peft_reward = PeftModel.from_pretrained(reward_model, adapter_path) # Load peft model
-    peft_reward.eval()
-    inputs.to(peft_reward.device)
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
+    pdft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
+    pdft_sft.eval()
+    inputs.to(pdft_sft.device)
 
-    outputs = peft_model.generate(
+    outputs = pdft_sft.generate(
         **inputs,
         max_new_tokens=1024,
         do_sample=True,
@@ -195,6 +201,41 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
+    print("SFT Model Inference:\n")
+    for i, completion in enumerate(completions):  # Print completions and their scores
+        print(f"\n--- Completion {i + 1} ---")
+        print(completion)
+
+    ################
+    # Generate completions after grpo training
+    ################
+
+    # Load grpo-trained peft model
+    from peft import PeftModel
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-grpo"
+    peft_grpo = PeftModel.from_pretrained(base_model, adapter_path) # Load peft model
+    peft_grpo.eval()
+    inputs.to(peft_grpo.device)
+
+    outputs = peft_grpo.generate(
+        **inputs,
+        max_new_tokens=1024,
+        do_sample=True,
+        temperature=0.7,
+        num_return_sequences=2,
+    )
+
+    # Figure out how many tokens were used for the prompt:
+    prompt_length = inputs["input_ids"].shape[1]
+
+    # Decode only tokens beyond the prompt
+    completions = []
+    for output in outputs:
+        # Slice off the prompt tokens to keep only the model’s response
+        response_tokens = output[prompt_length:]
+        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+        completions.append(response_text)
+    print("GRPO Model Inference:\n")
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
