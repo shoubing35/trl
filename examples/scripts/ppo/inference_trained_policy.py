@@ -152,9 +152,9 @@ if __name__ == "__main__":
     outputs = peft_base.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=2,
+        do_sample=False,
+        # temperature=0.7,
+        # num_return_sequences=2,
     )
 
     # Figure out how many tokens were used for the prompt:
@@ -186,9 +186,9 @@ if __name__ == "__main__":
     outputs = pdft_sft.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=2,
+        do_sample=False,
+        # temperature=0.7,
+        # num_return_sequences=2,
     )
 
     # Figure out how many tokens were used for the prompt:
@@ -220,9 +220,9 @@ if __name__ == "__main__":
     outputs = peft_grpo.generate(
         **inputs,
         max_new_tokens=1024,
-        do_sample=True,
-        temperature=0.7,
-        num_return_sequences=2,
+        do_sample=False,
+        # temperature=0.7,
+        # num_return_sequences=2,
     )
 
     # Figure out how many tokens were used for the prompt:
