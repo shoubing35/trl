@@ -133,10 +133,16 @@ if __name__ == "__main__":
         ref_policy = None
 
     # Create inference input
-    text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
-    text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
-    text_inference = text_instr + "\n" + text_input
-    inputs = tokenizer(text_inference, return_tensors="pt")
+    from datasets import Dataset
+    df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
+    df["text"] = df["text_instr"] + "\n" + df["text_input"]
+    df = df[["text"]]  # keep only the 'text' column
+    print("First data point:")
+    print(df["text"][0])
+    # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
+    # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
+    # text_inference = text_instr + "\n" + text_input
+    inputs = tokenizer(df["text"].to_list(), return_tensors="pt")
 
     ################
     # Generate completions before training
@@ -167,7 +173,7 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
-    print("Base Model Inference:\n")
+    print("\nBase Model Inference:")
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
@@ -201,7 +207,7 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
-    print("SFT Model Inference:\n")
+    print("\nSFT Model Inference:")
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
@@ -235,7 +241,7 @@ if __name__ == "__main__":
         response_tokens = output[prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
         completions.append(response_text)
-    print("GRPO Model Inference:\n")
+    print("\nGRPO Model Inference:")
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
