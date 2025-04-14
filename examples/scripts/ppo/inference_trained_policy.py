@@ -137,13 +137,13 @@ if __name__ == "__main__":
     import pandas as pd
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"]
-    df = df[["text"]]  # keep only the 'text' column
-    print("First data point:")
-    print(df["text"][0])
+    df = df[["text"]].to_list()  # keep only the 'text' column
+    # print("First data point:")
+    # print(df["text"][0])
     # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
     # text_inference = text_instr + "\n" + text_input
-    inputs = tokenizer(df["text"].to_list(), return_tensors="pt")
+    inputs = tokenizer(df[0], return_tensors="pt")
 
     ################
     # Generate completions before training
