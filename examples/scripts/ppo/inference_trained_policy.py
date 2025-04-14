@@ -138,7 +138,7 @@ if __name__ == "__main__":
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"]
     df = df[["text"]]  # keep only the 'text' column
-    df.to_list()
+    df["text"].to_list()
     # print("First data point:")
     # print(df["text"][0])
     # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
