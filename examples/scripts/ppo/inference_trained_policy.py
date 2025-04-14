@@ -139,8 +139,8 @@ if __name__ == "__main__":
     df["text"] = df["text_instr"] + "\n" + df["text_input"]
     df = df[["text"]]  # keep only the 'text' column
     df = df["text"].to_list()
-    # print("First data point:")
-    # print(df["text"][0])
+    print("First data point:")
+    print(df[0])
     # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
     # text_inference = text_instr + "\n" + text_input
@@ -186,70 +186,70 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
 
-    ################
-    # Generate completions after sft training
-    ################
-
-    # Load sft-trained peft model
-    from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
-    pdft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
-    pdft_sft.eval()
-    inputs.to(pdft_sft.device)
-
-    outputs = pdft_sft.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=2,
-    )
-
-    # Figure out how many tokens were used for the prompt:
-    prompt_length = inputs["input_ids"].shape[1]
-
-    # Decode only tokens beyond the prompt
-    completions = []
-    for output in outputs:
-        # Slice off the prompt tokens to keep only the model’s response
-        response_tokens = output[prompt_length:]
-        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-        completions.append(response_text)
-    print("\nSFT Model Inference:")
-    for i, completion in enumerate(completions):  # Print completions and their scores
-        print(f"\n--- Completion {i + 1} ---")
-        print(completion)
-
-    ################
-    # Generate completions after grpo training
-    ################
-
-    # Load grpo-trained peft model
-    from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-grpo"
-    peft_grpo = PeftModel.from_pretrained(base_model, adapter_path) # Load peft model
-    peft_grpo.eval()
-    inputs.to(peft_grpo.device)
-
-    outputs = peft_grpo.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=2,
-    )
-
-    # Figure out how many tokens were used for the prompt:
-    prompt_length = inputs["input_ids"].shape[1]
-
-    # Decode only tokens beyond the prompt
-    completions = []
-    for output in outputs:
-        # Slice off the prompt tokens to keep only the model’s response
-        response_tokens = output[prompt_length:]
-        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-        completions.append(response_text)
-    print("\nGRPO Model Inference:")
-    for i, completion in enumerate(completions):  # Print completions and their scores
-        print(f"\n--- Completion {i + 1} ---")
-        print(completion)
+    # ################
+    # # Generate completions after sft training
+    # ################
+    #
+    # # Load sft-trained peft model
+    # from peft import PeftModel
+    # adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
+    # pdft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
+    # pdft_sft.eval()
+    # inputs.to(pdft_sft.device)
+    #
+    # outputs = pdft_sft.generate(
+    #     **inputs,
+    #     max_new_tokens=1024,
+    #     do_sample=False,
+    #     # temperature=0.7,
+    #     # num_return_sequences=2,
+    # )
+    #
+    # # Figure out how many tokens were used for the prompt:
+    # prompt_length = inputs["input_ids"].shape[1]
+    #
+    # # Decode only tokens beyond the prompt
+    # completions = []
+    # for output in outputs:
+    #     # Slice off the prompt tokens to keep only the model’s response
+    #     response_tokens = output[prompt_length:]
+    #     response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+    #     completions.append(response_text)
+    # print("\nSFT Model Inference:")
+    # for i, completion in enumerate(completions):  # Print completions and their scores
+    #     print(f"\n--- Completion {i + 1} ---")
+    #     print(completion)
+    #
+    # ################
+    # # Generate completions after grpo training
+    # ################
+    #
+    # # Load grpo-trained peft model
+    # from peft import PeftModel
+    # adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-grpo"
+    # peft_grpo = PeftModel.from_pretrained(base_model, adapter_path) # Load peft model
+    # peft_grpo.eval()
+    # inputs.to(peft_grpo.device)
+    #
+    # outputs = peft_grpo.generate(
+    #     **inputs,
+    #     max_new_tokens=1024,
+    #     do_sample=False,
+    #     # temperature=0.7,
+    #     # num_return_sequences=2,
+    # )
+    #
+    # # Figure out how many tokens were used for the prompt:
+    # prompt_length = inputs["input_ids"].shape[1]
+    #
+    # # Decode only tokens beyond the prompt
+    # completions = []
+    # for output in outputs:
+    #     # Slice off the prompt tokens to keep only the model’s response
+    #     response_tokens = output[prompt_length:]
+    #     response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+    #     completions.append(response_text)
+    # print("\nGRPO Model Inference:")
+    # for i, completion in enumerate(completions):  # Print completions and their scores
+    #     print(f"\n--- Completion {i + 1} ---")
+    #     print(completion)
