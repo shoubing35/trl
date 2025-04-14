@@ -162,6 +162,9 @@ if __name__ == "__main__":
         do_sample=False,
         # temperature=0.7,
         # num_return_sequences=2,
+        padding=True,
+        truncation=True,
+        max_length=2048,
     )
 
     # Figure out how many tokens were used for the prompt:
