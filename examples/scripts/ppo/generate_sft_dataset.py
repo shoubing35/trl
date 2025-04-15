@@ -141,10 +141,24 @@ if __name__ == "__main__":
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"] + "\n" + df["text_label"]
     df = df[["text"]]  # keep only the 'text' column
-    train_dataset = Dataset.from_pandas(df, preserve_index=False)
-    print("train_dataset[0]:")
-    train_dataset[0]
-    train_dataset.push_to_hub("shoubing35/ones_digit_sft_dataset")
+
+    # Optional: Shuffle the dataset
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+
+    # Create train/test split (e.g., 80/20)
+    split_idx = int(0.8 * len(df))
+    ds = DatasetDict({
+        "train": Dataset.from_pandas(df[:split_idx]),
+        "test": Dataset.from_pandas(df[split_idx:])
+    })
+
+    ds.push_to_hub("shoubing35/ones_digit_sft_dataset")
+
+    # no train-test split
+    # train_dataset = Dataset.from_pandas(df, preserve_index=False)
+    # print("train_dataset[0]:")
+    # train_dataset[0]
+    # train_dataset.push_to_hub("shoubing35/ones_digit_sft_dataset")
 
     # # text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
     # # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
