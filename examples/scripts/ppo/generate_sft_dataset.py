@@ -152,7 +152,7 @@ if __name__ == "__main__":
         "test": Dataset.from_pandas(df[split_idx:])
     })
 
-    ds.push_to_hub("shoubing35/ones_digit_sft_dataset")
+    ds.push_to_hub("shoubing35/ones_digit_sft_dataset_mini")
 
     # no train-test split
     # train_dataset = Dataset.from_pandas(df, preserve_index=False)
