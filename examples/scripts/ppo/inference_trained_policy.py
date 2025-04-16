@@ -161,8 +161,11 @@ if __name__ == "__main__":
         padding=True,
         truncation=True,
         max_length=2048,
-        add_special_tokens=False,
     )
+
+    for i, text in enumerate(df):  # assuming df is a list of strings
+        input_ids = tokenizer(text, truncation=False)["input_ids"]
+        print(f"Input {i}: {len(input_ids)} tokens")
 
     ################
     # Generate completions before training
