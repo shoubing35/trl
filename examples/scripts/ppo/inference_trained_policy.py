@@ -155,7 +155,7 @@ if __name__ == "__main__":
     print(text_inference)
 
     inputs = tokenizer(
-        df[:2], # first question in dataset
+        df, # first question in dataset
         # text_inference, # original question
         return_tensors="pt",
         padding=True,
