@@ -161,6 +161,7 @@ if __name__ == "__main__":
         padding=True,
         truncation=True,
         max_length=2048,
+        add_special_tokens=False,
     )
 
     ################
