@@ -155,7 +155,7 @@ if __name__ == "__main__":
     print(text_inference)
 
     inputs = tokenizer(
-        df, # first question in dataset
+        df[1], # first question in dataset
         # text_inference, # original question
         return_tensors="pt",
         padding=True,
@@ -163,8 +163,8 @@ if __name__ == "__main__":
         max_length=2048,
     )
 
-    for i, input_ids in enumerate(inputs["input_ids"]): # debug: batch generate index out of range
-        print(f"Padded input {i}: {len(input_ids)} tokens")
+    # for i, input_ids in enumerate(inputs["input_ids"]): # debug: batch generate index out of range
+    #     print(f"Padded input {i}: {len(input_ids)} tokens")
 
     ################
     # Generate completions before training
@@ -175,11 +175,11 @@ if __name__ == "__main__":
     import torch
     peft_base = get_peft_model(base_model, peft_config)
     peft_base.eval()
-    # inputs.to(peft_base.device) # Create fresh peft model
-    model_device = next(peft_base.parameters()).device
-    inputs = {k: v.to(model_device) for k, v in inputs.items()}
+    inputs.to(peft_base.device) # Create fresh peft model
+    # model_device = next(peft_base.parameters()).device
+    # inputs = {k: v.to(model_device) for k, v in inputs.items()}
 
-    print("Batch size:", inputs["input_ids"].shape[0]) # debug: batch generate index out of range
+    # print("Batch size:", inputs["input_ids"].shape[0]) # debug: batch generate index out of range
 
     outputs = peft_base.generate(
         **inputs,
