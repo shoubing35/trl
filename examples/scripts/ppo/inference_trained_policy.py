@@ -154,6 +154,8 @@ if __name__ == "__main__":
     print("Manual question:")
     print(text_inference)
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     inputs = tokenizer(
         df, # first question in dataset
         # text_inference, # original question
@@ -173,7 +175,7 @@ if __name__ == "__main__":
     peft_base = get_peft_model(base_model, peft_config)
     peft_base.eval()
     # inputs.to(peft_base.device) # Create fresh peft model
-    inputs = {k: v.to(peft_base.device) for k, v in inputs.items()}
+    inputs = {k: v.to(device) for k, v in inputs.items()}
 
     outputs = peft_base.generate(
         **inputs,
