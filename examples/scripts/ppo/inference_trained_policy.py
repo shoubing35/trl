@@ -172,7 +172,8 @@ if __name__ == "__main__":
     import torch
     peft_base = get_peft_model(base_model, peft_config)
     peft_base.eval()
-    inputs.to(peft_base.device) # Create fresh peft model
+    # inputs.to(peft_base.device) # Create fresh peft model
+    inputs = {k: v.to(peft_base.device) for k, v in inputs.items()}
 
     outputs = peft_base.generate(
         **inputs,
