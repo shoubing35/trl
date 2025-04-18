@@ -313,7 +313,7 @@ if __name__ == "__main__":
         # for i, completion in enumerate(completions):  # Print completions and their scores
         # print(f"\n--- Completion {i + 1} ---")
         print(response_text)
-        print(f"response_text = {response_text}") # debug temp
+        print(f"len(response_text) = {len(response_text)}") # debug temp
         prediction = extract_boxed(response_text)
         predictions.append(prediction)
         print(f"Prediction = {prediction}")
