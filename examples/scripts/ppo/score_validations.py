@@ -299,6 +299,8 @@ if __name__ == "__main__":
         predictions.append(prediction)
         print(f"Prediction = {prediction}")
         print(f"Answer = {df['answer'][i]}")
+    print(f"predictions = {predictions}")
+    print(f"answers = {df['answer']}")
     score_predictions(predictions, df['answer'], verbose=True)
 
     # ################
