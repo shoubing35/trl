@@ -81,6 +81,29 @@ def extract_boxed(text):
         return int(match.group(1))
     return None
 
+def score_predictions(predictions, answers, verbose=False):
+    assert len(predictions) == len(answers), "Mismatched lengths!"
+
+    correct = 0
+    total = len(answers)
+    mismatches = []
+
+    for i, (pred, ans) in enumerate(zip(predictions, answers)):
+        if str(pred).strip() == str(ans).strip():
+            correct += 1
+        else:
+            mismatches.append((i, pred, ans))
+
+    accuracy = correct / total
+
+    if verbose and mismatches:
+        print("\nMismatches:")
+        for idx, pred, ans in mismatches:
+            print(f"[{idx}] Prediction: {pred} | Answer: {ans}")
+
+    print(f"\n✅ Accuracy: {accuracy:.2%} ({correct}/{total})")
+    return accuracy
+
 if __name__ == "__main__":
     parser = HfArgumentParser((ScriptArguments, PPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_into_dataclasses()
@@ -237,6 +260,7 @@ if __name__ == "__main__":
     peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
     peft_sft.eval()
 
+    predictions = []
     for i in range(2):
         inputs = tokenizer(
             # df_text[0], # first question in dataset
@@ -271,8 +295,11 @@ if __name__ == "__main__":
         # for i, completion in enumerate(completions):  # Print completions and their scores
         # print(f"\n--- Completion {i + 1} ---")
         print(response_text)
-        print(f"Prediction = {extract_boxed(response_text)}")
+        prediction = extract_boxed(response_text)
+        predictions.append(prediction)
+        print(f"Prediction = {prediction}")
         print(f"Answer = {df['answer'][i]}")
+    score_predictions(predictions, df['answer'], verbose=True)
 
     # ################
     # # Generate completions after grpo training
