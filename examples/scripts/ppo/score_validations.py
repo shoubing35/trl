@@ -299,6 +299,7 @@ if __name__ == "__main__":
         prompt_length = inputs["input_ids"].shape[1]
 
         print(f"[{i}] Prompt length: {prompt_length}") # debug temp
+        print(f"prompt = {df_prompt[i]}") # debug temp
         print(f"[{i}] Output shape: {output.shape}") # debug temp
 
         # Decode only tokens beyond the prompt
@@ -312,6 +313,7 @@ if __name__ == "__main__":
         # for i, completion in enumerate(completions):  # Print completions and their scores
         # print(f"\n--- Completion {i + 1} ---")
         print(response_text)
+        print(f"response_text = {response_text}") # debug temp
         prediction = extract_boxed(response_text)
         predictions.append(prediction)
         print(f"Prediction = {prediction}")
