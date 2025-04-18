@@ -140,7 +140,7 @@ if __name__ == "__main__":
     from datasets import Dataset, DatasetDict
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"] + "\n" + df["text_label"]
-    df = df[["text"]]  # keep only the 'text' column
+    # df = df[["text"]]  # keep only the 'text' column
 
     # Optional: Shuffle the dataset
     df = df.sample(frac=1, random_state=42).reset_index(drop=True)
@@ -151,7 +151,7 @@ if __name__ == "__main__":
 
     ds = DatasetDict({
         "train": Dataset.from_pandas(df[:train_end]),
-        "validation": Dataset.from_pandas(df[train_end:val_end]),
+        "val": Dataset.from_pandas(df[train_end:val_end]),
         "test": Dataset.from_pandas(df[val_end:])
     })
 

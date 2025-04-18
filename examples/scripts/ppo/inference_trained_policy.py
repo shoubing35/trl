@@ -151,9 +151,14 @@ if __name__ == "__main__":
     # Create inference input
     from datasets import Dataset
     import pandas as pd
-    df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
-    df["text"] = df["text_instr"] + "\n" + df["text_input"]
-    # df = df[["text"]]  # keep only the 'text' column
+
+    # load from csv
+    # df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
+    # # df = df[["text"]]  # keep only the 'text' column
+
+    # load from hf
+    df = load_dataset(shoubing35/ones_digit_sft_dataset, split="val")
+
     df_text = df["text"].to_list()
     print("First data point:")
     print(df_text[0])
