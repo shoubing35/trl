@@ -223,7 +223,7 @@ if __name__ == "__main__":
     peft_base.eval()
 
     predictions = []
-    for i in range(2)
+    for i in range(2):
         inputs = tokenizer(
             # df_text[0], # first question in dataset
             # text_inference, # manual question
