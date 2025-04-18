@@ -308,6 +308,10 @@ if __name__ == "__main__":
             # Slice off the prompt tokens to keep only the model’s response
         response_tokens = output[0][prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+
+        full_text = tokenizer.decode(output[0], skip_special_tokens=True)
+        print(f"Full decoded output:\n{full_text}")
+
         # completions.append(response_text)
         print("\nSFT Model Inference:")
         # for i, completion in enumerate(completions):  # Print completions and their scores
