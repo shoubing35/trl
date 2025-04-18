@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # # df = df[["text"]]  # keep only the 'text' column
 
     # load from hf
-    df = load_dataset(shoubing35/ones_digit_sft_dataset, split="val")
+    df = load_dataset("shoubing35/ones_digit_sft_dataset", split="val")
     df_prompt = df["text_prompt"].to_list()
 
     print("First data point:")
