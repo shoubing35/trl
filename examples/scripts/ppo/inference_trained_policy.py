@@ -262,7 +262,7 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
         print(f"Prediction = {extract_boxed(completion)}")
-        print(f"Answer = {df["answer"][i]}")
+        print(f"Answer = {df['answer'][i]}")
 
     # ################
     # # Generate completions after grpo training
