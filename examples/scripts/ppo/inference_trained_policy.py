@@ -233,11 +233,11 @@ if __name__ == "__main__":
     # Load sft-trained peft model
     from peft import PeftModel
     adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
-    pdft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
-    pdft_sft.eval()
-    inputs.to(pdft_sft.device)
+    peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
+    peft_sft.eval()
+    inputs.to(peft_sft.device)
 
-    outputs = pdft_sft.generate(
+    outputs = peft_sft.generate(
         **inputs,
         max_new_tokens=1024,
         do_sample=False,
