@@ -153,10 +153,12 @@ if __name__ == "__main__":
     import pandas as pd
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"]
-    df = df[["text"]]  # keep only the 'text' column
-    df = df["text"].to_list()
+    # df = df[["text"]]  # keep only the 'text' column
+    df_text = df["text"].to_list()
     print("First data point:")
-    print(df[0])
+    print(df_text[0])
+    print("First answer:")
+    print(df["answer"][0])
 
     text_instr = "You are a math expert with clear and concise reasoning. Solve this problem step-by-step and box your final numerical answer:"
 
@@ -177,7 +179,7 @@ if __name__ == "__main__":
     print(text_inference)
 
     inputs = tokenizer(
-        df[0], # first question in dataset
+        df_text[0], # first question in dataset
         # text_inference, # manual question
         return_tensors="pt",
         padding=True,
@@ -260,7 +262,7 @@ if __name__ == "__main__":
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
         print(f"Extracted answer = {extract_boxed(completion)}")
-        # print(f"Expected answer = df["answer"][i]")
+        print(f"Expected answer = {df["answer"][i]}")
 
     # ################
     # # Generate completions after grpo training
