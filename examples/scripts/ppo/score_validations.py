@@ -275,7 +275,7 @@ if __name__ == "__main__":
     peft_sft.eval()
 
     predictions = []
-    for i in range(2):
+    for i in range(len(df)):
         inputs = tokenizer(
             # df_text[0], # first question in dataset
             # text_inference, # manual question
@@ -314,8 +314,8 @@ if __name__ == "__main__":
         print(f"Prediction = {prediction}")
         print(f"Answer = {df['answer'][i]}")
     print(f"predictions = {predictions}")
-    print(f"answers = {df['answer'][:len(predictions)]}")
-    score_predictions(predictions, df['answer'][:len(predictions)], verbose=True)
+    print(f"answers = {df['answer'][:len(df)]}")
+    score_predictions(predictions, df['answer'][:len(df)], verbose=True)
 
     # ################
     # # Generate completions after grpo training
