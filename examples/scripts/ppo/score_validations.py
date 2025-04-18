@@ -185,15 +185,7 @@ if __name__ == "__main__":
     print("Manual question:")
     print(text_inference)
 
-    inputs = tokenizer(
-        # df_text[0], # first question in dataset
-        # text_inference, # manual question
-        df_prompt[0],
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=2048,
-    )
+
 
     # for i, input_ids in enumerate(inputs["input_ids"]): # debug: batch generate index out of range
     #     print(f"Padded input {i}: {len(input_ids)} tokens")
@@ -239,38 +231,47 @@ if __name__ == "__main__":
     ################
     # Generate completions after sft training
     ################
+    for i in range(2):
+        inputs = tokenizer(
+            # df_text[0], # first question in dataset
+            # text_inference, # manual question
+            df_prompt[i],
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=2048,
+        )
+        # Load sft-trained peft model
+        from peft import PeftModel
+        adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
+        peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
+        peft_sft.eval()
+        inputs.to(peft_sft.device)
 
-    # Load sft-trained peft model
-    from peft import PeftModel
-    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
-    peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
-    peft_sft.eval()
-    inputs.to(peft_sft.device)
+        output = peft_sft.generate(
+            **inputs,
+            max_new_tokens=1024,
+            do_sample=False,
+            # temperature=0.7,
+            # num_return_sequences=2,
+        )
 
-    output = peft_sft.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=2,
-    )
+        # Figure out how many tokens were used for the prompt:
+        prompt_length = inputs["input_ids"].shape[1]
 
-    # Figure out how many tokens were used for the prompt:
-    prompt_length = inputs["input_ids"].shape[1]
-
-    # Decode only tokens beyond the prompt
-    # completions = []
-    # for output in outputs:
-        # Slice off the prompt tokens to keep only the model’s response
-    response_tokens = output[0][prompt_length:]
-    response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-    # completions.append(response_text)
-    print("\nSFT Model Inference:")
-    # for i, completion in enumerate(completions):  # Print completions and their scores
-    # print(f"\n--- Completion {i + 1} ---")
-    print(response_text)
-    print(f"Prediction = {extract_boxed(response_text)}")
-    print(f"Answer = {df['answer'][0]}")
+        # Decode only tokens beyond the prompt
+        # completions = []
+        # for output in outputs:
+            # Slice off the prompt tokens to keep only the model’s response
+        response_tokens = output[0][prompt_length:]
+        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+        # completions.append(response_text)
+        print("\nSFT Model Inference:")
+        # for i, completion in enumerate(completions):  # Print completions and their scores
+        # print(f"\n--- Completion {i + 1} ---")
+        print(response_text)
+        print(f"Prediction = {extract_boxed(response_text)}")
+        print(f"Answer = {df['answer'][i]}")
 
     # ################
     # # Generate completions after grpo training
