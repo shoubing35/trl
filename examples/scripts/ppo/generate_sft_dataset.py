@@ -140,6 +140,7 @@ if __name__ == "__main__":
     from datasets import Dataset, DatasetDict
     df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
     df["text"] = df["text_instr"] + "\n" + df["text_input"] + "\n" + df["text_label"]
+    df["text_prompt"] = df["text_instr"] + "\n" + df["text_input"]
     # df = df[["text"]]  # keep only the 'text' column
 
     # Optional: Shuffle the dataset
