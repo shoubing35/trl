@@ -231,6 +231,12 @@ if __name__ == "__main__":
     ################
     # Generate completions after sft training
     ################
+    # Load sft-trained peft model
+    from peft import PeftModel
+    adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
+    peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
+    peft_sft.eval()
+
     for i in range(2):
         inputs = tokenizer(
             # df_text[0], # first question in dataset
@@ -241,11 +247,6 @@ if __name__ == "__main__":
             truncation=True,
             max_length=2048,
         )
-        # Load sft-trained peft model
-        from peft import PeftModel
-        adapter_path = "/content/drive/MyDrive/Colab_Notebooks/llama-1B-sft"
-        peft_sft = PeftModel.from_pretrained(base_model, adapter_path)  # Load peft model
-        peft_sft.eval()
         inputs.to(peft_sft.device)
 
         output = peft_sft.generate(
