@@ -64,6 +64,22 @@ accelerate launch --config_file examples/accelerate_configs/deepspeed_zero3.yaml
     --local_rollout_forward_batch_size 1 \
     --missing_eos_penalty 1.0
 """
+import re
+
+def extract_boxed(text):
+    """
+    Extracts the numerical value inside the first \boxed{} expression in the given string.
+
+    Parameters:
+        text (str): The input string containing LaTeX-style boxed expression.
+
+    Returns:
+        int or None: The extracted number if found, otherwise None.
+    """
+    match = re.search(r"\\boxed\{(\d+)\}", text)
+    if match:
+        return int(match.group(1))
+    return None
 
 if __name__ == "__main__":
     parser = HfArgumentParser((ScriptArguments, PPOConfig, ModelConfig))
@@ -161,8 +177,8 @@ if __name__ == "__main__":
     print(text_inference)
 
     inputs = tokenizer(
-        # df[0], # first question in dataset
-        text_inference, # manual question
+        df[0], # first question in dataset
+        # text_inference, # manual question
         return_tensors="pt",
         padding=True,
         truncation=True,
@@ -172,43 +188,43 @@ if __name__ == "__main__":
     # for i, input_ids in enumerate(inputs["input_ids"]): # debug: batch generate index out of range
     #     print(f"Padded input {i}: {len(input_ids)} tokens")
 
-    ################
-    # Generate completions before training
-    ################
-
-    # Craete fresh peft model (for loading in 8-bit)
-    from peft import get_peft_model
-    import torch
-    peft_base = get_peft_model(base_model, peft_config)
-    peft_base.eval()
-    inputs.to(peft_base.device) # Create fresh peft model
-    # model_device = next(peft_base.parameters()).device
-    # inputs = {k: v.to(model_device) for k, v in inputs.items()}
-
-    # print("Batch size:", inputs["input_ids"].shape[0]) # debug: batch generate index out of range
-
-    outputs = peft_base.generate(
-        **inputs,
-        max_new_tokens=1024,
-        do_sample=False,
-        # temperature=0.7,
-        # num_return_sequences=2,
-    )
-
-    # Figure out how many tokens were used for the prompt:
-    prompt_length = inputs["input_ids"].shape[1]
-
-    # Decode only tokens beyond the prompt
-    completions = []
-    for output in outputs:
-        # Slice off the prompt tokens to keep only the model’s response
-        response_tokens = output[prompt_length:]
-        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-        completions.append(response_text)
-    print("\nBase Model Inference:")
-    for i, completion in enumerate(completions):  # Print completions and their scores
-        print(f"\n--- Completion {i + 1} ---")
-        print(completion)
+    # ################
+    # # Generate completions before training
+    # ################
+    #
+    # # Craete fresh peft model (for loading in 8-bit)
+    # from peft import get_peft_model
+    # import torch
+    # peft_base = get_peft_model(base_model, peft_config)
+    # peft_base.eval()
+    # inputs.to(peft_base.device) # Create fresh peft model
+    # # model_device = next(peft_base.parameters()).device
+    # # inputs = {k: v.to(model_device) for k, v in inputs.items()}
+    #
+    # # print("Batch size:", inputs["input_ids"].shape[0]) # debug: batch generate index out of range
+    #
+    # outputs = peft_base.generate(
+    #     **inputs,
+    #     max_new_tokens=1024,
+    #     do_sample=False,
+    #     # temperature=0.7,
+    #     # num_return_sequences=2,
+    # )
+    #
+    # # Figure out how many tokens were used for the prompt:
+    # prompt_length = inputs["input_ids"].shape[1]
+    #
+    # # Decode only tokens beyond the prompt
+    # completions = []
+    # for output in outputs:
+    #     # Slice off the prompt tokens to keep only the model’s response
+    #     response_tokens = output[prompt_length:]
+    #     response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+    #     completions.append(response_text)
+    # print("\nBase Model Inference:")
+    # for i, completion in enumerate(completions):  # Print completions and extract boxed answer
+    #     print(f"\n--- Completion {i + 1} ---")
+    #     print(completion)
 
     ################
     # Generate completions after sft training
@@ -243,6 +259,8 @@ if __name__ == "__main__":
     for i, completion in enumerate(completions):  # Print completions and their scores
         print(f"\n--- Completion {i + 1} ---")
         print(completion)
+        print(f"Extracted answer = {extract_boxed(completion)}")
+        # print(f"Expected answer = df["answer"][i]")
 
     # ################
     # # Generate completions after grpo training
