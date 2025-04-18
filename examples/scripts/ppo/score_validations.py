@@ -301,7 +301,7 @@ if __name__ == "__main__":
         print(f"Answer = {df['answer'][i]}")
     print(f"predictions = {predictions}")
     print(f"answers = {df['answer']}")
-    score_predictions(predictions, df['answer'], verbose=True)
+    score_predictions(predictions, df['answer'][:2], verbose=True)
 
     # ################
     # # Generate completions after grpo training
