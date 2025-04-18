@@ -154,14 +154,16 @@ if __name__ == "__main__":
 
     # load from csv
     # df = pd.read_csv("/content/drive/MyDrive/Colab_Notebooks/my_dataset/sft_dataset.csv")
+    # df_text = df["text"].to_list()
     # # df = df[["text"]]  # keep only the 'text' column
 
     # load from hf
     df = load_dataset(shoubing35/ones_digit_sft_dataset, split="val")
+    df_prompt = df["text_prompt"].to_list()
 
-    df_text = df["text"].to_list()
     print("First data point:")
-    print(df_text[0])
+    # print(df_text[0])
+    print(df_prompt[0])
     print("First answer:")
     print(df["answer"][0])
 
@@ -183,15 +185,10 @@ if __name__ == "__main__":
     print("Manual question:")
     print(text_inference)
 
-    texts = [
-        "What's 2 + 2?",
-        "What is the capital of France?",
-    ]
-
     inputs = tokenizer(
         # df_text[0], # first question in dataset
         # text_inference, # manual question
-        texts, # debug: batch generate
+        df_prompt[0],
         return_tensors="pt",
         padding=True,
         truncation=True,
