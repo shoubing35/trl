@@ -178,9 +178,15 @@ if __name__ == "__main__":
     print("Manual question:")
     print(text_inference)
 
+    texts = [
+        "What's 2 + 2?",
+        "What is the capital of France?",
+    ]
+
     inputs = tokenizer(
-        df_text[0], # first question in dataset
+        # df_text[0], # first question in dataset
         # text_inference, # manual question
+        texts, # debug: batch generate
         return_tensors="pt",
         padding=True,
         truncation=True,
