@@ -159,7 +159,7 @@ if __name__ == "__main__":
 
     # load from hf
     df = load_dataset("shoubing35/ones_digit_sft_dataset", split="val")
-    df_prompt = df["text_prompt"].to_list()
+    df_prompt = df["text_prompt"]
 
     print("First data point:")
     # print(df_text[0])
