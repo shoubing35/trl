@@ -181,7 +181,7 @@ if __name__ == "__main__":
     # subproblem #2
     # text_input = "How many integers between 1 and 30 have the same tens digit as the number 23?"
 
-    text_inference = text_instr + "\n" + text_input
+    text_inference = text_instr + "\n" + text_input + "\n"
     print("Manual question:")
     print(text_inference)
 
