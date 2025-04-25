@@ -196,7 +196,10 @@ if __name__ == "__main__":
     # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). How many pages retain the same ones digit before and after renumbering?"
 
     # validation problem
-    text_input = "A booklet contains 99 pages, numbered from 1 to 99. The pages are then renumbered so that page 1 becomes 99, page 2 becomes 98, and so on. How many pages keep the same ones digit after renumbering?"
+    # text_input = "A booklet contains 99 pages, numbered from 1 to 99. The pages are then renumbered so that page 1 becomes 99, page 2 becomes 98, and so on. How many pages keep the same ones digit after renumbering?"
+
+    # val problem that yielded empty completion
+    text_input = "There is a book with pages numbered 1 through 17. After reversing the page numbers such that page $n$ becomes 18 minus $n$, how many pages retain their original ones digit?"
 
     # subproblem #1
     # text_input = "A book with 50 pages, numbered 1 to 50, has its pages renumbered in reverse (page 1 becomes 50, page 2 becomes 49, etc.). What does page 32 become?"
