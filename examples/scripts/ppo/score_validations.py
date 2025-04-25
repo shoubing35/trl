@@ -275,7 +275,7 @@ if __name__ == "__main__":
     peft_sft.eval()
 
     predictions = []
-    for i in range(8,10):
+    for i in range(len(df_prompt)):
         inputs = tokenizer(
             # df_text[0], # first question in dataset
             # text_inference, # manual question
