@@ -310,8 +310,8 @@ if __name__ == "__main__":
         response_tokens = output[0][prompt_length:]
         response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
 
-        full_text = tokenizer.decode(output[0], skip_special_tokens=True) # debug
-        print(f"Full decoded output:\n{full_text}")
+        # full_text = tokenizer.decode(output[0], skip_special_tokens=True) # debug
+        # print(f"Full decoded output:\n{full_text}")
 
         new_token = output[0][prompt_length:] # debug
         print("New token:", tokenizer.decode(new_token))
