@@ -281,7 +281,7 @@ if __name__ == "__main__":
             # text_inference, # manual question
             df_prompt[i],
             return_tensors="pt",
-            padding=True,
+            padding=False,
             truncation=True,
             max_length=2048,
         )
