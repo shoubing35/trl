@@ -182,7 +182,8 @@ if __name__ == "__main__":
 
     # load from hf
     df = load_dataset("shoubing35/ones_digit_sft_dataset", split="val")
-    df_prompt = df["text_prompt"]
+    # df_prompt = df["text_prompt"]
+    df_prompt = [prompt + "\n" for prompt in df["text_prompt"]] # debug: append "\n" to each prompt
 
     print("First data point:")
     # print(df_text[0])
@@ -281,7 +282,7 @@ if __name__ == "__main__":
             # text_inference, # manual question
             df_prompt[i],
             return_tensors="pt",
-            padding=False,
+            # padding=False,
             truncation=True,
             max_length=2048,
         )
