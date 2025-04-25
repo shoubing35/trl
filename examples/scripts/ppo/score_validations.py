@@ -313,8 +313,8 @@ if __name__ == "__main__":
         # full_text = tokenizer.decode(output[0], skip_special_tokens=True) # debug
         # print(f"Full decoded output:\n{full_text}")
 
-        new_token = output[0][prompt_length:] # debug
-        print("New token:", tokenizer.decode(new_token))
+        # new_token = output[0][prompt_length:] # debug
+        # print("New token:", tokenizer.decode(new_token))
 
         # completions.append(response_text)
         print("\nSFT Model Inference:")
