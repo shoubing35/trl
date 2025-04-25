@@ -190,8 +190,8 @@ if __name__ == "__main__":
 
     inputs = tokenizer(
         # df_text[0], # first question in dataset
-        # text_inference, # manual question
-        df_prompt[0],
+        text_inference, # manual question
+        # df_prompt[0],
         return_tensors="pt",
         padding=True,
         truncation=True,
