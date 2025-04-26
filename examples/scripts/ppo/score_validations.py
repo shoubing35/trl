@@ -217,54 +217,54 @@ if __name__ == "__main__":
     # ################
     # # Generate completions before training
     # ################
-    # # Craete fresh peft model (for loading in 8-bit)
-    # from peft import get_peft_model
-    # import torch
-    # peft_base = get_peft_model(base_model, peft_config)
-    # peft_base.eval()
-    #
-    # predictions = []
-    # for i in range(2):
-    #     inputs = tokenizer(
-    #         # df_text[0], # first question in dataset
-    #         # text_inference, # manual question
-    #         df_prompt[i],
-    #         return_tensors="pt",
-    #         padding=True,
-    #         truncation=True,
-    #         max_length=2048,
-    #     )
-    #     inputs.to(peft_base.device) # Create fresh peft model
-    #
-    #     output = peft_base.generate(
-    #         **inputs,
-    #         max_new_tokens=1024,
-    #         do_sample=False,
-    #         # temperature=0.7,
-    #         # num_return_sequences=2,
-    #     )
-    #
-    #     # Figure out how many tokens were used for the prompt:
-    #     prompt_length = inputs["input_ids"].shape[1]
-    #
-    #     # Decode only tokens beyond the prompt
-    #     # completions = []
-    #     # for output in outputs:
-    #     # Slice off the prompt tokens to keep only the model’s response
-    #     response_tokens = output[0][prompt_length:]
-    #     response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
-    #     # completions.append(response_text)
-    #     print("\nBase Model Inference:")
-    #     # for i, completion in enumerate(completions):  # Print completions and their scores
-    #     # print(f"\n--- Completion {i + 1} ---")
-    #     print(response_text)
-    #     prediction = extract_boxed(response_text)
-    #     predictions.append(prediction)
-    #     print(f"Prediction = {prediction}")
-    #     print(f"Answer = {df['answer'][i]}")
-    # print(f"predictions = {predictions}")
-    # print(f"answers = {df['answer']}")
-    # score_predictions(predictions, df['answer'][:2], verbose=True)
+    # Craete fresh peft model (for loading in 8-bit)
+    from peft import get_peft_model
+    import torch
+    peft_base = get_peft_model(base_model, peft_config)
+    peft_base.eval()
+
+    predictions = []
+    for i in range(2):
+        inputs = tokenizer(
+            # df_text[0], # first question in dataset
+            # text_inference, # manual question
+            df_prompt[i],
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=2048,
+        )
+        inputs.to(peft_base.device) # Create fresh peft model
+
+        output = peft_base.generate(
+            **inputs,
+            max_new_tokens=1024,
+            do_sample=False,
+            # temperature=0.7,
+            # num_return_sequences=2,
+        )
+
+        # Figure out how many tokens were used for the prompt:
+        prompt_length = inputs["input_ids"].shape[1]
+
+        # Decode only tokens beyond the prompt
+        # completions = []
+        # for output in outputs:
+        # Slice off the prompt tokens to keep only the model’s response
+        response_tokens = output[0][prompt_length:]
+        response_text = tokenizer.decode(response_tokens, skip_special_tokens=True)
+        # completions.append(response_text)
+        print("\nBase Model Inference:")
+        # for i, completion in enumerate(completions):  # Print completions and their scores
+        # print(f"\n--- Completion {i + 1} ---")
+        print(response_text)
+        prediction = extract_boxed(response_text)
+        predictions.append(prediction)
+        print(f"Prediction = {prediction}")
+        print(f"Answer = {df['answer'][i]}")
+    print(f"predictions = {predictions}")
+    print(f"answers = {df['answer']}")
+    score_predictions(predictions, df['answer'][:2], verbose=True)
 
     ################
     # Generate completions after sft training
