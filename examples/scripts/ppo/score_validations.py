@@ -185,6 +185,8 @@ if __name__ == "__main__":
     # df_prompt = df["text_prompt"]
     df_prompt = [prompt + "\n" for prompt in df["text_prompt"]] # debug: append "\n" to each prompt
 
+    print(f"len(df_prompt) = {len(df_prompt)}")
+
     print("First data point:")
     # print(df_text[0])
     print(df_prompt[0])
